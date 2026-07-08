@@ -151,8 +151,12 @@
             width: 40px;
             height: 40px;
             border-radius: 50%;
-            object-fit: cover;
-            border: 1px solid var(--border-color);
+            background: linear-gradient(135deg, #5b3af2, #7c5af7);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #ffffff;
+            flex-shrink: 0;
         }
 
         .user-details {
@@ -1187,7 +1191,9 @@
 
         <!-- Sidebar User footer profile -->
         <div class="sidebar-user">
-            <img src="priya_sharma_avatar.png" alt="Priya Sharma" class="user-avatar">
+            <div class="user-avatar">
+                <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+            </div>
             <div class="user-details">
                 <div class="user-name">Priya Sharma</div>
                 <div class="user-role">Sales Representative</div>
@@ -1487,7 +1493,7 @@
                             <tr class="clickable-row" onclick="window.location.href='lead-profile.html'">
                                 <td>
                                     <div class="lead-profile-cell">
-                                        <img src="rahul_sharma_avatar.png" alt="Rahul Sharma" class="lead-avatar">
+                                        <div class="avatar-placeholder" style="background-color: #5b3af2;">RS</div>
                                         <div class="lead-info">
                                             <span class="lead-name">Rahul Sharma</span>
                                             <span class="lead-title-sub">CFO</span>
@@ -1623,7 +1629,7 @@
                             </div>
                         </div>
                         <div class="meeting-client-profile">
-                            <img src="rahul_sharma_avatar.png" alt="Rahul Sharma" class="client-avatar">
+                            <div class="avatar-placeholder" style="width: 32px; height: 32px; font-size: 0.75rem; background-color: #5b3af2;">RS</div>
                             <div class="client-info">
                                 <span class="client-name">Rahul Sharma</span>
                                 <span class="client-company">XYZ Logistics</span>
@@ -1801,11 +1807,7 @@
                     tr.className = 'clickable-row';
                     tr.onclick = () => { window.location.href = 'lead-profile.html'; };
                     
-                    // Special check for Rahul Sharma to use the actual generated avatar image!
                     let avatarHTML = `<div class="avatar-placeholder" style="background-color: #5b3af2;">${initials}</div>`;
-                    if (name === 'Rahul Sharma') {
-                        avatarHTML = `<img src="rahul_sharma_avatar.png" alt="Rahul Sharma" class="lead-avatar">`;
-                    }
 
                     tr.innerHTML = `
                         <td>
