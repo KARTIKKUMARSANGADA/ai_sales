@@ -1003,7 +1003,7 @@
 
         <!-- Sidebar User Profile -->
         <div class="sidebar-user">
-            <img src="priya_sharma_avatar.png" alt="Priya Sharma" class="user-avatar">
+            <div class="user-avatar" style="width:40px;height:40px;border-radius:50%;background:linear-gradient(135deg,#5b3af2,#7c5af7);display:flex;align-items:center;justify-content:center;color:#fff;flex-shrink:0;"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg></div>
             <div class="user-details">
                 <div class="user-name">Priya Sharma</div>
                 <div class="user-role">Sales Representative</div>
@@ -1078,7 +1078,7 @@
                     <!-- Thread Item 1 (Rahul Sharma) -->
                     <div class="thread-item active" id="threadRahul">
                         <div class="thread-avatar-wrapper">
-                            <img src="rahul_sharma_avatar.png" alt="Rahul Sharma" class="thread-avatar" id="listAvatar">
+                            <div class="thread-avatar" id="listAvatar" style="width:40px;height:40px;border-radius:50%;background:linear-gradient(135deg,#5b3af2,#7c5af7);display:flex;align-items:center;justify-content:center;color:#fff;flex-shrink:0;"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg></div>
                             <span class="channel-icon-badge" style="color:var(--primary);">
                                 <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg>
                             </span>
@@ -1236,7 +1236,7 @@ Rahul
                 <div>
                     <h5 class="details-section-title">Lead Context</h5>
                     <div class="context-lead-card">
-                        <img src="rahul_sharma_avatar.png" alt="Rahul Sharma" class="context-avatar" id="detailsAvatar">
+                        <div class="context-avatar" id="detailsAvatar" style="width:48px;height:48px;border-radius:50%;background:linear-gradient(135deg,#5b3af2,#7c5af7);display:flex;align-items:center;justify-content:center;color:#fff;flex-shrink:0;"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg></div>
                         <div class="context-name-block">
                             <span class="context-name" id="detailsName">Rahul Sharma</span>
                             <span class="context-company" id="detailsCompany">CFO at XYZ Logistics</span>
@@ -1294,8 +1294,8 @@ Rahul
 
         if (!isRahul) {
             // Replace images with generic letter avatars
-            listAvatarImg.src = 'priya_sharma_avatar.png'; // Fallback
-            detailsAvatarImg.src = 'priya_sharma_avatar.png'; // Fallback
+            
+            
         }
 
         // Action button route setup
