@@ -146,8 +146,12 @@
             width: 40px;
             height: 40px;
             border-radius: 50%;
-            object-fit: cover;
-            border: 1px solid var(--border-color);
+            background: linear-gradient(135deg, #5b3af2, #7c5af7);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #ffffff;
+            flex-shrink: 0;
         }
 
         .user-details {
@@ -366,15 +370,12 @@
             width: 90px;
             height: 90px;
             border-radius: 50%;
-            object-fit: cover;
             border: 3px solid var(--primary-light);
-            background-color: #f1f5f9;
+            background: linear-gradient(135deg, #5b3af2, #7c5af7);
             display: flex;
             align-items: center;
             justify-content: center;
-            font-size: 2.2rem;
-            font-weight: 750;
-            color: var(--primary);
+            color: #ffffff;
             flex-shrink: 0;
         }
 
@@ -1176,7 +1177,9 @@
 
         <!-- Sidebar User footer profile -->
         <div class="sidebar-user">
-            <img src="priya_sharma_avatar.png" alt="Priya Sharma" class="user-avatar">
+            <div class="user-avatar">
+                <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+            </div>
             <div class="user-details">
                 <div class="user-name">Priya Sharma</div>
                 <div class="user-role">Sales Representative</div>
@@ -1233,7 +1236,9 @@
         <!-- Top Profile Banner Row -->
         <div class="profile-banner-card">
             <div class="profile-banner-left">
-                <div class="large-avatar" id="profileBannerPic">RS</div>
+                <div class="large-avatar" id="profileBannerPic">
+                    <svg width="44" height="44" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+                </div>
                 <div class="profile-info-block">
                     <div class="name-row">
                         <h2 class="profile-name-text" id="profileBannerName">Rahul Sharma</h2>
@@ -1557,14 +1562,9 @@
         // Description Paragraph
         document.getElementById('summaryDescription').innerText = `${companyName} is a rapidly growing company in the ${industryVal} sector, focusing on technology-driven solutions, fleet expansion, and scaling operations.`;
 
-        // Large Profile Picture
+        // Large Profile Picture — always use SVG person icon
         const profilePic = document.getElementById('profileBannerPic');
-        if (fullName === 'Rahul Sharma') {
-            profilePic.innerHTML = `<img src="rahul_sharma_avatar.png" alt="Rahul Sharma" style="width:100%; height:100%; border-radius:50%; object-fit:cover;">`;
-        } else {
-            const initials = fullName.split(' ').map(n => n[0]).join('').toUpperCase().substring(0, 2);
-            profilePic.innerHTML = initials;
-        }
+        profilePic.innerHTML = `<svg width="44" height="44" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>`;
 
         // Setup routing helpers passing queries forward
         const forwardParams = new URLSearchParams();
