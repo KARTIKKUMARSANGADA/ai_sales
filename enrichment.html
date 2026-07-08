@@ -1,0 +1,1511 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SalesAI — Lead Enrichment</title>
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --primary: #5b3af2;
+            --primary-hover: #4726d9;
+            --primary-light: #eff1fe;
+            --text-dark: #0f172a;
+            --text-muted: #64748b;
+            --bg-body: #f8fafc;
+            --bg-card: #ffffff;
+            --border-color: #e2e8f0;
+            --font-family: 'Plus Jakarta Sans', sans-serif;
+            --shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
+            --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.05), 0 2px 4px -1px rgba(0, 0, 0, 0.03);
+            --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.04), 0 4px 6px -2px rgba(0, 0, 0, 0.02);
+            
+            --success: #10b981;
+            --success-light: #ecfdf5;
+            --warning: #f59e0b;
+            --warning-light: #fffbeb;
+            --info: #3b82f6;
+            --info-light: #eff6ff;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: var(--font-family);
+            background-color: var(--bg-body);
+            color: var(--text-dark);
+            min-height: 100vh;
+            display: flex;
+            overflow-x: hidden;
+        }
+
+        /* Sidebar Container */
+        .sidebar {
+            width: 260px;
+            background: #ffffff;
+            border-right: 1px solid var(--border-color);
+            padding: 2rem 1.5rem;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            position: fixed;
+            top: 0;
+            bottom: 0;
+            left: 0;
+            z-index: 100;
+        }
+
+        .logo-container {
+            display: flex;
+            align-items: center;
+            gap: 0.6rem;
+            text-decoration: none;
+            color: var(--text-dark);
+            font-weight: 700;
+            font-size: 1.35rem;
+            margin-bottom: 2rem;
+        }
+
+        .logo-icon {
+            color: var(--primary);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .logo-text span {
+            color: var(--primary);
+        }
+
+        /* Sidebar Navigation */
+        .nav-links {
+            display: flex;
+            flex-direction: column;
+            gap: 0.35rem;
+            list-style: none;
+            flex: 1;
+        }
+
+        .nav-item a {
+            display: flex;
+            align-items: center;
+            gap: 0.85rem;
+            padding: 0.75rem 1rem;
+            color: var(--text-muted);
+            text-decoration: none;
+            font-weight: 600;
+            font-size: 0.95rem;
+            border-radius: 8px;
+            transition: all 0.2s ease;
+        }
+
+        .nav-item a:hover {
+            color: var(--primary);
+            background-color: #f8fafc;
+        }
+
+        .nav-item.active a {
+            color: var(--primary);
+            background-color: var(--primary-light);
+        }
+
+        .nav-icon {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            width: 20px;
+            height: 20px;
+        }
+
+        .inbox-badge {
+            margin-left: auto;
+            background-color: var(--primary);
+            color: #ffffff;
+            font-size: 0.75rem;
+            font-weight: 700;
+            padding: 0.15rem 0.5rem;
+            border-radius: 999px;
+        }
+
+        /* Sidebar Footer / User Profile */
+        .sidebar-user {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            padding-top: 1.5rem;
+            border-top: 1px solid var(--border-color);
+            margin-top: 1.5rem;
+        }
+
+        .user-avatar {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            object-fit: cover;
+            border: 1px solid var(--border-color);
+        }
+
+        .user-details {
+            flex: 1;
+            min-width: 0;
+        }
+
+        .user-name {
+            font-size: 0.88rem;
+            font-weight: 700;
+            color: var(--text-dark);
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+        .user-role {
+            font-size: 0.75rem;
+            color: var(--text-muted);
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+        .user-dropdown {
+            color: var(--text-muted);
+            cursor: pointer;
+        }
+
+        /* Main Content Workspace */
+        .main-workspace {
+            margin-left: 260px;
+            flex: 1;
+            padding: 2.2rem 2.5rem;
+            min-width: 0;
+            display: flex;
+            flex-direction: column;
+            gap: 2rem;
+        }
+
+        /* Top Header */
+        .workspace-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .header-title-section {
+            display: flex;
+            flex-direction: column;
+            gap: 0.35rem;
+        }
+
+        .workspace-title {
+            font-size: 1.6rem;
+            font-weight: 700;
+            color: var(--text-dark);
+        }
+
+        .workspace-breadcrumbs {
+            font-size: 0.82rem;
+            color: var(--text-muted);
+            font-weight: 500;
+            display: flex;
+            align-items: center;
+            gap: 0.4rem;
+        }
+
+        .workspace-breadcrumbs span.active {
+            color: var(--text-dark);
+            font-weight: 600;
+        }
+
+        .header-actions {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+        }
+
+        .search-wrapper {
+            position: relative;
+            width: 260px;
+        }
+
+        .search-input {
+            width: 100%;
+            background-color: #ffffff;
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            padding: 0.6rem 0.8rem 0.6rem 2.3rem;
+            font-family: var(--font-family);
+            font-size: 0.88rem;
+            font-weight: 500;
+            outline: none;
+            transition: all 0.2s ease;
+        }
+
+        .search-input:focus {
+            border-color: var(--primary);
+            box-shadow: 0 0 0 3px rgba(91, 58, 242, 0.1);
+        }
+
+        .search-icon {
+            position: absolute;
+            left: 0.8rem;
+            top: 50%;
+            transform: translateY(-50%);
+            color: var(--text-muted);
+            display: flex;
+            align-items: center;
+        }
+
+        .icon-btn {
+            background-color: #ffffff;
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            width: 38px;
+            height: 38px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--text-dark);
+            cursor: pointer;
+            position: relative;
+            transition: all 0.2s ease;
+        }
+
+        .icon-btn:hover {
+            border-color: var(--primary);
+            color: var(--primary);
+        }
+
+        .btn-badge {
+            position: absolute;
+            top: -4px;
+            right: -4px;
+            background-color: var(--primary);
+            color: #ffffff;
+            font-size: 0.7rem;
+            font-weight: 700;
+            width: 16px;
+            height: 16px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .btn-new-lead {
+            background-color: var(--primary);
+            color: #ffffff;
+            border: none;
+            border-radius: 8px;
+            padding: 0.6rem 1.1rem;
+            font-family: var(--font-family);
+            font-size: 0.88rem;
+            font-weight: 600;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 0.4rem;
+            transition: background-color 0.2s ease;
+        }
+
+        .btn-new-lead:hover {
+            background-color: var(--primary-hover);
+        }
+
+        /* 2-Column Split Workspace Grid */
+        .workspace-grid {
+            display: grid;
+            grid-template-columns: 2.1fr 1fr;
+            gap: 2rem;
+            align-items: start;
+        }
+
+        @media (max-width: 1024px) {
+            .workspace-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        /* Left Column Cards */
+        .left-column {
+            display: flex;
+            flex-direction: column;
+            gap: 1.5rem;
+        }
+
+        .card {
+            background: #ffffff;
+            border: 1px solid var(--border-color);
+            border-radius: 12px;
+            padding: 2rem;
+            box-shadow: var(--shadow-sm);
+        }
+
+        .card-header-row {
+            display: flex;
+            align-items: flex-start;
+            gap: 1rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .card-header-icon {
+            width: 44px;
+            height: 44px;
+            border-radius: 10px;
+            background-color: var(--primary-light);
+            color: var(--primary);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-shrink: 0;
+        }
+
+        .card-header-text {
+            display: flex;
+            flex-direction: column;
+            gap: 0.25rem;
+        }
+
+        .card-title {
+            font-size: 1.15rem;
+            font-weight: 700;
+            color: var(--text-dark);
+        }
+
+        .card-subtitle {
+            font-size: 0.88rem;
+            color: var(--text-muted);
+            font-weight: 500;
+        }
+
+        /* Progress Bar Section */
+        .progress-section {
+            margin-bottom: 2rem;
+        }
+
+        .progress-header-info {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 0.65rem;
+        }
+
+        .progress-percentage {
+            color: var(--primary);
+            font-weight: 700;
+            font-size: 0.95rem;
+            transition: all 0.3s ease;
+        }
+
+        .progress-track {
+            height: 8px;
+            background-color: #f1f5f9;
+            border-radius: 99px;
+            overflow: hidden;
+            margin-bottom: 0.5rem;
+        }
+
+        .progress-fill {
+            height: 100%;
+            width: 10%; /* Simulated start */
+            background-color: var(--primary);
+            border-radius: 99px;
+            transition: width 0.6s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        .progress-subtext {
+            font-size: 0.8rem;
+            color: var(--text-muted);
+            font-weight: 500;
+        }
+
+        /* Sources Table */
+        .sources-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 1rem;
+        }
+
+        .sources-table th, .sources-table td {
+            text-align: left;
+            padding: 0.9rem 1rem;
+            border-bottom: 1px solid var(--border-color);
+            font-size: 0.88rem;
+        }
+
+        .sources-table th {
+            color: var(--text-muted);
+            font-weight: 600;
+            padding-bottom: 0.75rem;
+        }
+
+        .sources-table td {
+            font-weight: 550;
+        }
+
+        .source-cell {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+        }
+
+        .source-logo {
+            width: 24px;
+            height: 24px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 0.7rem;
+            font-weight: 800;
+            color: #ffffff;
+            flex-shrink: 0;
+        }
+
+        .source-name {
+            font-weight: 700;
+            color: var(--text-dark);
+        }
+
+        /* Status Badges in table */
+        .status-pill {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.35rem;
+            font-size: 0.82rem;
+            font-weight: 700;
+        }
+
+        .status-pill.completed { color: var(--success); }
+        .status-pill.in-progress { color: var(--primary); }
+        .status-pill.pending { color: var(--text-muted); }
+
+        .status-pill svg {
+            flex-shrink: 0;
+        }
+
+        .spin-icon {
+            animation: spin 1.5s linear infinite;
+        }
+
+        @keyframes spin {
+            100% { transform: rotate(360deg); }
+        }
+
+        .details-cell {
+            color: var(--text-dark);
+            font-weight: 500;
+        }
+
+        .details-cell.pending-text {
+            color: var(--text-muted);
+        }
+
+        /* Live Found Data Cards */
+        .live-preview-title {
+            font-size: 0.88rem;
+            font-weight: 750;
+            color: var(--text-muted);
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            margin-bottom: 1rem;
+        }
+
+        .live-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 1rem;
+            margin-bottom: 1.25rem;
+        }
+
+        @media (max-width: 768px) {
+            .live-grid {
+                grid-template-columns: 1fr 1fr;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .live-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        .live-card {
+            background: #ffffff;
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            padding: 1rem;
+            display: flex;
+            flex-direction: column;
+            gap: 0.35rem;
+            transition: all 0.4s ease;
+            opacity: 0.3; /* Loading blurred state */
+            filter: blur(1.5px);
+        }
+
+        .live-card.active {
+            opacity: 1;
+            filter: none;
+            border-color: #e2e8f0;
+            box-shadow: var(--shadow-sm);
+        }
+
+        .live-label {
+            font-size: 0.78rem;
+            font-weight: 600;
+            color: var(--text-muted);
+        }
+
+        .live-value {
+            font-size: 0.88rem;
+            font-weight: 700;
+            color: var(--text-dark);
+            word-break: break-all;
+        }
+
+        .live-confidence {
+            display: flex;
+            align-items: center;
+            gap: 0.25rem;
+            font-size: 0.72rem;
+            color: var(--success);
+            font-weight: 600;
+            margin-top: 0.2rem;
+        }
+
+        .live-confidence.hidden {
+            display: none;
+        }
+
+        .bottom-banner {
+            background-color: var(--info-light);
+            border: 1px solid #bfdbfe;
+            border-radius: 8px;
+            padding: 0.9rem 1.2rem;
+            display: flex;
+            align-items: center;
+            gap: 0.6rem;
+            font-size: 0.85rem;
+            color: #1e3a8a;
+            font-weight: 600;
+            transition: all 0.3s ease;
+        }
+
+        .bottom-banner svg {
+            color: var(--info);
+            flex-shrink: 0;
+        }
+
+        .bottom-banner.success-banner {
+            background-color: var(--success-light);
+            border-color: #a7f3d0;
+            color: #065f46;
+        }
+
+        .bottom-banner.success-banner svg {
+            color: var(--success);
+        }
+
+        /* Action button revealed when completed */
+        .completion-actions {
+            margin-top: 1.5rem;
+            display: none;
+            justify-content: flex-end;
+            animation: fadeIn 0.5s ease forwards;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(5px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .btn-complete-done {
+            background-color: var(--primary);
+            color: #ffffff;
+            border: none;
+            border-radius: 8px;
+            padding: 0.8rem 1.8rem;
+            font-family: var(--font-family);
+            font-size: 0.95rem;
+            font-weight: 700;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            box-shadow: 0 4px 12px rgba(91, 58, 242, 0.2);
+            transition: all 0.2s;
+        }
+
+        .btn-complete-done:hover {
+            background-color: var(--primary-hover);
+        }
+
+        /* Right Column widgets */
+        .right-column {
+            display: flex;
+            flex-direction: column;
+            gap: 1.5rem;
+        }
+
+        .widget-card {
+            background: #ffffff;
+            border: 1px solid var(--border-color);
+            border-radius: 12px;
+            padding: 1.5rem;
+            box-shadow: var(--shadow-sm);
+        }
+
+        /* Profile details card */
+        .profile-widget {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            text-align: center;
+            padding: 1.8rem 1.5rem;
+        }
+
+        .profile-pic {
+            width: 80px;
+            height: 80px;
+            border-radius: 50%;
+            object-fit: cover;
+            border: 2px solid var(--primary-light);
+            margin-bottom: 1.1rem;
+            background-color: #f1f5f9;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.8rem;
+            font-weight: 750;
+            color: var(--primary);
+        }
+
+        .profile-name {
+            font-size: 1.15rem;
+            font-weight: 700;
+            color: var(--text-dark);
+            margin-bottom: 0.25rem;
+        }
+
+        .profile-title {
+            font-size: 0.86rem;
+            color: var(--text-muted);
+            font-weight: 600;
+            margin-bottom: 1rem;
+        }
+
+        .profile-badge {
+            background-color: var(--primary-light);
+            color: var(--primary);
+            font-size: 0.76rem;
+            font-weight: 750;
+            padding: 0.35rem 0.8rem;
+            border-radius: 999px;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.35rem;
+            transition: all 0.3s ease;
+        }
+
+        .profile-badge.enriched-badge {
+            background-color: var(--success-light);
+            color: var(--success);
+        }
+
+        .profile-badge-dot {
+            width: 6px;
+            height: 6px;
+            border-radius: 50%;
+            background-color: var(--primary);
+        }
+
+        .profile-badge.enriched-badge .profile-badge-dot {
+            background-color: var(--success);
+        }
+
+        /* Details list card */
+        .widget-section-title {
+            font-size: 0.9rem;
+            font-weight: 750;
+            color: var(--text-dark);
+            margin-bottom: 1.1rem;
+            border-bottom: 1px solid var(--border-color);
+            padding-bottom: 0.5rem;
+        }
+
+        .details-list {
+            display: flex;
+            flex-direction: column;
+            gap: 1rem;
+            list-style: none;
+        }
+
+        .details-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            font-size: 0.85rem;
+        }
+
+        .details-label {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            color: var(--text-muted);
+            font-weight: 600;
+        }
+
+        .details-label svg {
+            color: #94a3b8;
+            flex-shrink: 0;
+        }
+
+        .details-value {
+            font-weight: 600;
+            color: var(--text-dark);
+            text-align: right;
+            max-width: 60%;
+            word-break: break-all;
+        }
+
+        .details-value.finding {
+            color: var(--primary);
+            font-weight: 700;
+            animation: pulse 1.5s infinite;
+        }
+
+        @keyframes pulse {
+            0%, 100% { opacity: 0.6; }
+            50% { opacity: 1; }
+        }
+
+        /* Security Card */
+        .security-card {
+            background-color: var(--primary-light);
+            border: 1px solid #e0e7ff;
+            border-radius: 12px;
+            padding: 1.1rem 1.4rem;
+            display: flex;
+            align-items: flex-start;
+            gap: 0.8rem;
+            font-size: 0.8rem;
+            color: #312e81;
+            font-weight: 600;
+            line-height: 1.4;
+        }
+
+        .security-card svg {
+            color: var(--primary);
+            flex-shrink: 0;
+            margin-top: 1px;
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Left Sidebar Panel -->
+    <div class="sidebar">
+        <div>
+            <!-- Logo Section -->
+            <a href="dashboard.html" class="logo-container">
+                <span class="logo-icon">
+                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"/>
+                        <polyline points="3.27 6.96 12 12.01 20.73 6.96"/>
+                        <line x1="12" y1="22.08" x2="12" y2="12"/>
+                    </svg>
+                </span>
+                <span class="logo-text">Sales<span>AI</span></span>
+            </a>
+
+            <!-- Navigation Links -->
+            <ul class="nav-links">
+                <li class="nav-item">
+                    <a href="dashboard.html">
+                        <span class="nav-icon">
+                            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+                                <rect x="3" y="3" width="7" height="9"/>
+                                <rect x="14" y="3" width="7" height="5"/>
+                                <rect x="14" y="12" width="7" height="9"/>
+                                <rect x="3" y="16" width="7" height="5"/>
+                            </svg>
+                        </span>
+                        <span class="nav-text">Dashboard</span>
+                    </a>
+                </li>
+                <li class="nav-item active">
+                    <a href="leads.html">
+                        <span class="nav-icon">
+                            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+                                <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/>
+                                <circle cx="9" cy="7" r="4"/>
+                                <path d="M23 21v-2a4 4 0 0 0-3-3.87"/>
+                                <path d="M16 3.13a4 4 0 0 1 0 7.75"/>
+                            </svg>
+                        </span>
+                        <span class="nav-text">Leads</span>
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a href="companies.html">
+                        <span class="nav-icon">
+                            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+                                <path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"/>
+                            </svg>
+                        </span>
+                        <span class="nav-text">Companies</span>
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a href="campaigns.html">
+                        <span class="nav-icon">
+                            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+                                <polygon points="12 2 2 7 12 12 22 7 12 2"/>
+                                <polyline points="2 17 12 22 22 17"/>
+                                <polyline points="2 12 12 17 22 12"/>
+                            </svg>
+                        </span>
+                        <span class="nav-text">Campaigns</span>
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a href="inbox.html">
+                        <span class="nav-icon">
+                            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+                                <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/>
+                            </svg>
+                        </span>
+                        <span class="nav-text">Inbox</span>
+                        <span class="inbox-badge">12</span>
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a href="meetings.html">
+                        <span class="nav-icon">
+                            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+                                <rect x="3" y="4" width="18" height="18" rx="2" ry="2"/>
+                                <line x1="16" y1="2" x2="16" y2="6"/>
+                                <line x1="8" y1="2" x2="8" y2="6"/>
+                                <line x1="3" y1="10" x2="21" y2="10"/>
+                            </svg>
+                        </span>
+                        <span class="nav-text">Meetings</span>
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a href="tasks.html">
+                        <span class="nav-icon">
+                            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+                                <polyline points="9 11 12 14 22 4"/>
+                                <path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"/>
+                            </svg>
+                        </span>
+                        <span class="nav-text">Tasks</span>
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a href="deals.html">
+                        <span class="nav-icon">
+                            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+                                <line x1="12" y1="1" x2="12" y2="23"/>
+                                <path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/>
+                            </svg>
+                        </span>
+                        <span class="nav-text">Deals</span>
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a href="reports.html">
+                        <span class="nav-icon">
+                            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+                                <line x1="18" y1="20" x2="18" y2="10"/>
+                                <line x1="12" y1="20" x2="12" y2="4"/>
+                                <line x1="6" y1="20" x2="6" y2="14"/>
+                            </svg>
+                        </span>
+                        <span class="nav-text">Reports</span>
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a href="settings.html">
+                        <span class="nav-icon">
+                            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+                                <circle cx="12" cy="12" r="3"/>
+                                <path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 1 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 1 1-2.83-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 1 1 2.83-2.83l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 1 1 2.83 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"/>
+                            </svg>
+                        </span>
+                        <span class="nav-text">Settings</span>
+                    </a>
+                </li>
+            </ul>
+        </div>
+
+        <!-- Sidebar User footer profile -->
+        <div class="sidebar-user">
+            <img src="priya_sharma_avatar.png" alt="Priya Sharma" class="user-avatar">
+            <div class="user-details">
+                <div class="user-name">Priya Sharma</div>
+                <div class="user-role">Sales Representative</div>
+            </div>
+            <span class="user-dropdown">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="6 9 12 15 18 9"/></svg>
+            </span>
+        </div>
+    </div>
+
+    <!-- Main Content Panel -->
+    <div class="main-workspace">
+        
+        <!-- Workspace Header -->
+        <div class="workspace-header">
+            <div class="header-title-section">
+                <h1 class="workspace-title">Lead Enrichment</h1>
+                <div class="workspace-breadcrumbs">
+                    <span>Dashboard</span> &gt; <span>Leads</span> &gt; <span id="breadcrumbName">Rahul Sharma</span> &gt; <span class="active">Enrichment</span>
+                </div>
+            </div>
+            <div class="header-actions">
+                <div class="search-wrapper">
+                    <span class="search-icon">
+                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+                    </span>
+                    <input type="text" placeholder="Search leads, companies..." class="search-input">
+                </div>
+                <button class="icon-btn" onclick="alert('No new alerts.')">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/>
+                        <path d="M13.73 21a2 2 0 0 1-3.46 0"/>
+                    </svg>
+                    <span class="btn-badge">6</span>
+                </button>
+                <button class="icon-btn" onclick="alert('View Calendar dashboard.')">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+                        <rect x="3" y="4" width="18" height="18" rx="2" ry="2"/>
+                        <line x1="16" y1="2" x2="16" y2="6"/>
+                        <line x1="8" y1="2" x2="8" y2="6"/>
+                        <line x1="3" y1="10" x2="21" y2="10"/>
+                    </svg>
+                </button>
+                <button class="btn-new-lead" onclick="window.location.href='add-lead.html'">
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+                    New Lead
+                </button>
+            </div>
+        </div>
+
+        <!-- Split Grid Area -->
+        <div class="workspace-grid">
+            
+            <!-- Left Panel Column -->
+            <div class="left-column">
+                
+                <!-- Main Enrichment Card -->
+                <div class="card">
+                    <div class="card-header-row">
+                        <span class="card-header-icon" id="statusHeaderIcon">
+                            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+                                <path d="M12 2v20M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/>
+                            </svg>
+                        </span>
+                        <div class="card-header-text">
+                            <h3 class="card-title" id="enrichTitle">Enriching Lead Profile...</h3>
+                            <p class="card-subtitle" id="enrichSubtitle">We're searching multiple trusted sources to find the most accurate information.</p>
+                        </div>
+                    </div>
+
+                    <!-- Progress Indicator -->
+                    <div class="progress-section">
+                        <div class="progress-header-info">
+                            <span class="progress-subtext" id="timeRemainingText">This may take 30-60 seconds</span>
+                            <span class="progress-percentage" id="progressPercentageText">10% Completed</span>
+                        </div>
+                        <div class="progress-track">
+                            <div class="progress-fill" id="progressFillBar"></div>
+                        </div>
+                    </div>
+
+                    <!-- Sources Table -->
+                    <table class="sources-table">
+                        <thead>
+                            <tr>
+                                <th>Source</th>
+                                <th>Status</th>
+                                <th>Details</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <!-- Apollo.io -->
+                            <tr id="row-apollo">
+                                <td>
+                                    <div class="source-cell">
+                                        <div class="source-logo" style="background-color: #000000;">A</div>
+                                        <span class="source-name">Apollo.io</span>
+                                    </div>
+                                </td>
+                                <td>
+                                    <span class="status-pill in-progress" id="status-apollo">
+                                        <svg class="spin-icon" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><path d="M21.5 2v6h-6M21.34 15.57a10 10 0 1 1-.57-8.38l5.67-5.67"/></svg>
+                                        In Progress
+                                    </span>
+                                </td>
+                                <td><span class="details-cell" id="details-apollo">Searching database...</span></td>
+                            </tr>
+                            <!-- People Data Labs -->
+                            <tr id="row-pdl">
+                                <td>
+                                    <div class="source-cell">
+                                        <div class="source-logo" style="background-color: #3b82f6;">P</div>
+                                        <span class="source-name">People Data Labs</span>
+                                    </div>
+                                </td>
+                                <td>
+                                    <span class="status-pill pending" id="status-pdl">
+                                        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+                                        Pending
+                                    </span>
+                                </td>
+                                <td><span class="details-cell pending-text" id="details-pdl">Waiting to query...</span></td>
+                            </tr>
+                            <!-- Hunter.io -->
+                            <tr id="row-hunter">
+                                <td>
+                                    <div class="source-cell">
+                                        <div class="source-logo" style="background-color: #f97316;">H</div>
+                                        <span class="source-name">Hunter.io</span>
+                                    </div>
+                                </td>
+                                <td>
+                                    <span class="status-pill pending" id="status-hunter">
+                                        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+                                        Pending
+                                    </span>
+                                </td>
+                                <td><span class="details-cell pending-text" id="details-hunter">Waiting to query...</span></td>
+                            </tr>
+                            <!-- Google Search -->
+                            <tr id="row-google">
+                                <td>
+                                    <div class="source-cell">
+                                        <div class="source-logo" style="background-color: #ea4335;">G</div>
+                                        <span class="source-name">Google Search</span>
+                                    </div>
+                                </td>
+                                <td>
+                                    <span class="status-pill pending" id="status-google">
+                                        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+                                        Pending
+                                    </span>
+                                </td>
+                                <td><span class="details-cell pending-text" id="details-google">Waiting to query...</span></td>
+                            </tr>
+                            <!-- Company Website -->
+                            <tr id="row-website">
+                                <td>
+                                    <div class="source-cell">
+                                        <div class="source-logo" style="background-color: #a855f7;">W</div>
+                                        <span class="source-name">Company Website</span>
+                                    </div>
+                                </td>
+                                <td>
+                                    <span class="status-pill pending" id="status-website">
+                                        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+                                        Pending
+                                    </span>
+                                </td>
+                                <td><span class="details-cell pending-text" id="details-website">Waiting to query...</span></td>
+                            </tr>
+                            <!-- Recent News -->
+                            <tr id="row-news">
+                                <td>
+                                    <div class="source-cell">
+                                        <div class="source-logo" style="background-color: #10b981;">N</div>
+                                        <span class="source-name">Recent News</span>
+                                    </div>
+                                </td>
+                                <td>
+                                    <span class="status-pill pending" id="status-news">
+                                        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+                                        Pending
+                                    </span>
+                                </td>
+                                <td><span class="details-cell pending-text" id="details-news">Waiting to query...</span></td>
+                            </tr>
+                            <!-- LinkedIn -->
+                            <tr id="row-linkedin">
+                                <td>
+                                    <div class="source-cell">
+                                        <div class="source-logo" style="background-color: #0077b5;">in</div>
+                                        <span class="source-name">LinkedIn</span>
+                                    </div>
+                                </td>
+                                <td>
+                                    <span class="status-pill pending" id="status-linkedin">
+                                        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+                                        Pending
+                                    </span>
+                                </td>
+                                <td><span class="details-cell pending-text" id="details-linkedin">Waiting to query...</span></td>
+                            </tr>
+                        </tbody>
+                    </table>
+
+                    <!-- Return Button (Hidden until completed) -->
+                    <div class="completion-actions" id="completeActions">
+                        <button class="btn-complete-done" id="btnGoBack">
+                            Go to Dashboard
+                            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Live Found Data Preview -->
+                <div class="left-column-preview">
+                    <h4 class="live-preview-title">Live Found Data (Preview)</h4>
+                    <div class="live-grid">
+                        
+                        <!-- Email Card -->
+                        <div class="live-card" id="live-card-email">
+                            <span class="live-label">Email</span>
+                            <span class="live-value" id="preview-email">Finding...</span>
+                            <span class="live-confidence" id="confidence-email">
+                                <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
+                                Verified • 98% Confidence
+                            </span>
+                        </div>
+
+                        <!-- Phone Card -->
+                        <div class="live-card" id="live-card-phone">
+                            <span class="live-label">Phone</span>
+                            <span class="live-value" id="preview-phone">Finding...</span>
+                            <span class="live-confidence" id="confidence-phone">
+                                <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
+                                Verified • 95% Confidence
+                            </span>
+                        </div>
+
+                        <!-- Company Size Card -->
+                        <div class="live-card" id="live-card-size">
+                            <span class="live-label">Company Size</span>
+                            <span class="live-value" id="preview-size">Finding...</span>
+                            <span class="live-confidence" id="confidence-size">
+                                <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
+                                Verified • 90% Confidence
+                            </span>
+                        </div>
+
+                        <!-- Website Card -->
+                        <div class="live-card" id="live-card-web">
+                            <span class="live-label">Website</span>
+                            <span class="live-value" id="preview-web">Finding...</span>
+                            <span class="live-confidence" id="confidence-web">
+                                <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
+                                Verified • 100% Confidence
+                            </span>
+                        </div>
+                    </div>
+
+                    <!-- Bottom Notice Panel -->
+                    <div class="bottom-banner" id="bottomBanner">
+                        <svg class="spin-icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M21.5 2v6h-6M21.34 15.57a10 10 0 1 1-.57-8.38l5.67-5.67"/></svg>
+                        <span id="bannerText">Almost done! Finalizing data from company website and recent news...</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Right Column Widgets -->
+            <div class="right-column">
+                
+                <!-- Profile widget -->
+                <div class="widget-card profile-widget">
+                    <div class="profile-pic" id="profilePic">
+                        <!-- Replaced by image or initials via script -->
+                        RS
+                    </div>
+                    <h3 class="profile-name" id="profileName">Rahul Sharma</h3>
+                    <p class="profile-title" id="profileTitle">CFO at XYZ Logistics</p>
+                    <span class="profile-badge" id="profileBadge">
+                        <span class="profile-badge-dot" id="badgeDot"></span>
+                        <span id="badgeText">Enrichment in progress</span>
+                    </span>
+                </div>
+
+                <!-- Basic Information -->
+                <div class="widget-card">
+                    <h4 class="widget-section-title">Basic Information</h4>
+                    <ul class="details-list">
+                        <li class="details-item">
+                            <span class="details-label">
+                                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><rect x="4" y="2" width="16" height="20" rx="2" ry="2"/><line x1="9" y1="22" x2="9" y2="16"/><line x1="9" y1="16" x2="15" y2="16"/></svg>
+                                Company
+                            </span>
+                            <span class="details-value" id="infoCompany">XYZ Logistics</span>
+                        </li>
+                        <li class="details-item">
+                            <span class="details-label">
+                                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><circle cx="12" cy="12" r="10"/><line x1="2" y1="12" x2="22" y2="12"/></svg>
+                                Industry
+                            </span>
+                            <span class="details-value" id="infoIndustry">Logistics & Transportation</span>
+                        </li>
+                        <li class="details-item">
+                            <span class="details-label">
+                                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/></svg>
+                                Employees
+                            </span>
+                            <span class="details-value" id="infoEmployees">350+</span>
+                        </li>
+                        <li class="details-item">
+                            <span class="details-label">
+                                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M12 2a8 8 0 0 0-8 8c0 5.25 8 12 8 12s8-6.75 8-12a8 8 0 0 0-8-8z"/><circle cx="12" cy="10" r="3"/></svg>
+                                Location
+                            </span>
+                            <span class="details-value">Mumbai, India</span>
+                        </li>
+                    </ul>
+                </div>
+
+                <!-- Contact Information -->
+                <div class="widget-card">
+                    <h4 class="widget-section-title">Contact Information</h4>
+                    <ul class="details-list">
+                        <li class="details-item">
+                            <span class="details-label">
+                                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg>
+                                Email
+                            </span>
+                            <span class="details-value finding" id="contactEmail">Finding...</span>
+                        </li>
+                        <li class="details-item">
+                            <span class="details-label">
+                                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"/></svg>
+                                Phone
+                            </span>
+                            <span class="details-value finding" id="contactPhone">Finding...</span>
+                        </li>
+                        <li class="details-item">
+                            <span class="details-label">
+                                <svg width="14" height="14" fill="currentColor" viewBox="0 0 24 24"><path d="M19 0h-14c-2.761 0-5 2.239-5 5v14c0 2.761 2.239 5 5 5h14c2.762 0 5-2.239 5-5v-14c0-2.761-2.238-5-5-5zm-11 19h-3v-11h3v11zm-1.5-12.268c-.966 0-1.75-.779-1.75-1.75s.784-1.75 1.75-1.75 1.75.779 1.75 1.75-.784 1.75-1.75 1.75zm13.5 12.268h-3v-5.604c0-3.368-4-3.113-4 0v5.604h-3v-11h3v1.765c1.396-2.586 7-2.777 7 2.476v6.759z"/></svg>
+                                LinkedIn
+                            </span>
+                            <span class="details-value finding" id="contactLinkedin">Finding...</span>
+                        </li>
+                    </ul>
+                </div>
+
+                <!-- Security widget -->
+                <div class="security-card">
+                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/>
+                    </svg>
+                    <span>Data is 100% secure and never shared with third parties.</span>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Script to simulate dynamic progress bar loading steps -->
+    <script>
+        // Parse Query string parameters on load
+        const urlParams = new URLSearchParams(window.location.search);
+        const fullName = urlParams.get('name') || 'Rahul Sharma';
+        const companyName = urlParams.get('company') || 'XYZ Logistics';
+        const jobTitle = urlParams.get('title') || 'CFO';
+        const emailVal = urlParams.get('email') || 'rahul@example.com';
+        const phoneVal = urlParams.get('phone') || '+91 98765 43210';
+        const websiteVal = urlParams.get('website') || 'https://xyzlogistics.com';
+        const industryVal = urlParams.get('industry') || 'Logistics & Transportation';
+        const notesVal = urlParams.get('notes') || '';
+
+        // Clean website representation (e.g. xyzlogistics.com)
+        let cleanWeb = websiteVal.replace(/https?:\/\//i, '').replace(/www\./i, '');
+        if (cleanWeb.endsWith('/')) cleanWeb = cleanWeb.slice(0, -1);
+
+        // Prepopulate text fields in UI
+        document.getElementById('breadcrumbName').innerText = fullName;
+        document.getElementById('profileName').innerText = fullName;
+        document.getElementById('profileTitle').innerText = `${jobTitle} at ${companyName}`;
+        document.getElementById('infoCompany').innerText = companyName;
+        document.getElementById('infoIndustry').innerText = industryVal;
+
+        // Custom Profile Pic
+        const profilePic = document.getElementById('profilePic');
+        if (fullName === 'Rahul Sharma') {
+            profilePic.innerHTML = `<img src="rahul_sharma_avatar.png" alt="Rahul Sharma" style="width:100%; height:100%; border-radius:50%; object-fit:cover;">`;
+        } else {
+            const initials = fullName.split(' ').map(n => n[0]).join('').toUpperCase().substring(0, 2);
+            profilePic.innerHTML = initials;
+        }
+
+        // DOM elements for progress bar steps
+        const fillBar = document.getElementById('progressFillBar');
+        const percentageText = document.getElementById('progressPercentageText');
+        
+        // Define statuses, logs and previews mapping to progress percentages
+        const steps = [
+            {
+                pct: 10,
+                run: () => {
+                    updateStatus('apollo', 'in-progress', 'Searching database...');
+                }
+            },
+            {
+                pct: 30,
+                run: () => {
+                    updateStatus('apollo', 'completed', 'Contact & company data found');
+                    updateStatus('pdl', 'in-progress', 'Matching person profile...');
+                }
+            },
+            {
+                pct: 55,
+                run: () => {
+                    updateStatus('pdl', 'completed', 'Person profile matched');
+                    updateStatus('hunter', 'in-progress', 'Finding verified emails...');
+                    
+                    // Activate live card (Email)
+                    activateLiveCard('email', emailVal.replace('@', '@' + cleanWeb.split('.')[0] + '.'), '98%');
+                }
+            },
+            {
+                pct: 75,
+                run: () => {
+                    updateStatus('hunter', 'completed', 'Email found and verified');
+                    updateStatus('google', 'completed', 'Public information collected');
+                    updateStatus('website', 'in-progress', 'Reading company pages...');
+                    
+                    // Activate phone live card
+                    activateLiveCard('phone', phoneVal, '95%');
+                }
+            },
+            {
+                pct: 90,
+                run: () => {
+                    updateStatus('website', 'completed', 'Reading company pages...');
+                    updateStatus('news', 'in-progress', 'Gathering latest news...');
+                    updateStatus('linkedin', 'in-progress', 'Fetching LinkedIn profile...');
+                    
+                    // Activate Company Size and Website cards
+                    activateLiveCard('size', '350+ Employees', '90%');
+                    activateLiveCard('web', cleanWeb, '100%');
+                }
+            },
+            {
+                pct: 100,
+                run: () => {
+                    updateStatus('news', 'completed', 'Gathering latest news...');
+                    updateStatus('linkedin', 'completed', 'Fetching LinkedIn profile...');
+                    
+                    // Reveal contact info fields in right card
+                    revealContactInfo('contactEmail', emailVal.replace('@', '@' + cleanWeb.split('.')[0] + '.'));
+                    revealContactInfo('contactPhone', phoneVal);
+                    revealContactInfo('contactLinkedin', 'linkedin.com/in/' + fullName.toLowerCase().replace(/\s/g, ''));
+
+                    // Change badge and titles
+                    document.getElementById('badgeDot').style.display = 'none';
+                    document.getElementById('badgeText').innerText = 'Enriched';
+                    document.getElementById('profileBadge').classList.add('enriched-badge');
+                    
+                    document.getElementById('enrichTitle').innerText = 'Enrichment Completed!';
+                    document.getElementById('statusHeaderIcon').style.backgroundColor = 'var(--success-light)';
+                    document.getElementById('statusHeaderIcon').style.color = 'var(--success)';
+                    document.getElementById('statusHeaderIcon').innerHTML = `<svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>`;
+                    
+                    document.getElementById('enrichSubtitle').innerText = 'AI model successfully gathered structured contact and organization data.';
+                    document.getElementById('timeRemainingText').innerText = 'Completed just now';
+                    
+                    // Update bottom banner
+                    const banner = document.getElementById('bottomBanner');
+                    banner.classList.add('success-banner');
+                    banner.innerHTML = `<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg><span>All data successfully enriched and saved!</span>`;
+
+                    // Show completion button
+                    document.getElementById('completeActions').style.display = 'flex';
+                }
+            }
+        ];
+
+        // Status update helper
+        function updateStatus(source, state, detailText) {
+            const pill = document.getElementById(`status-${source}`);
+            const details = document.getElementById(`details-${source}`);
+            
+            if (state === 'completed') {
+                pill.className = 'status-pill completed';
+                pill.innerHTML = `<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>Completed`;
+                details.className = 'details-cell';
+            } else if (state === 'in-progress') {
+                pill.className = 'status-pill in-progress';
+                pill.innerHTML = `<svg class="spin-icon" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><path d="M21.5 2v6h-6M21.34 15.57a10 10 0 1 1-.57-8.38l5.67-5.67"/></svg>In Progress`;
+                details.className = 'details-cell';
+            }
+            
+            details.innerText = detailText;
+        }
+
+        // Live preview reveal helper
+        function activateLiveCard(id, value, confidence) {
+            const card = document.getElementById(`live-card-${id}`);
+            const valEl = document.getElementById(`preview-${id}`);
+            const confEl = document.getElementById(`confidence-${id}`);
+            
+            card.classList.add('active');
+            valEl.innerText = value;
+            if (confEl) {
+                confEl.classList.remove('hidden');
+                confEl.innerHTML = `<svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>Verified • ${confidence} Confidence`;
+            }
+        }
+
+        // Right card detail reveal helper
+        function revealContactInfo(id, value) {
+            const el = document.getElementById(id);
+            el.className = 'details-value';
+            el.innerText = value;
+        }
+
+        // Execute steps sequentially
+        let currentStepIndex = 0;
+        
+        function runEnrichmentTimer() {
+            if (currentStepIndex >= steps.length) return;
+            
+            const currentStep = steps[currentStepIndex];
+            
+            // Update progress bar
+            fillBar.style.width = `${currentStep.pct}%`;
+            percentageText.innerText = `${currentStep.pct}% Completed`;
+            
+            // Execute status actions
+            currentStep.run();
+            
+            currentStepIndex++;
+            
+            // Calculate next trigger time (1.2 seconds between steps for quick interactive feedback)
+            if (currentStepIndex < steps.length) {
+                setTimeout(runEnrichmentTimer, 1200);
+            }
+        }
+
+        // Start the loading sequence after 500ms initial delay
+        setTimeout(runEnrichmentTimer, 500);
+
+        // Bind Go to Dashboard back navigation pass query params
+        document.getElementById('btnGoBack').addEventListener('click', () => {
+            const dashboardParams = new URLSearchParams();
+            dashboardParams.append('enriched', 'true');
+            dashboardParams.append('name', fullName);
+            dashboardParams.append('title', jobTitle);
+            dashboardParams.append('company', companyName);
+            dashboardParams.append('industry', industryVal);
+            dashboardParams.append('status', 'enriched');
+            
+            window.location.href = `dashboard.html?${dashboardParams.toString()}`;
+        });
+    </script>
+</body>
+</html>

@@ -1,0 +1,947 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SalesAI — Leads</title>
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --primary: #5b3af2;
+            --primary-hover: #4726d9;
+            --primary-light: #eff1fe;
+            --text-dark: #0f172a;
+            --text-muted: #64748b;
+            --bg-body: #f8fafc;
+            --bg-card: #ffffff;
+            --border-color: #e2e8f0;
+            --font-family: 'Plus Jakarta Sans', sans-serif;
+            --shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
+            
+            --success: #10b981;
+            --success-light: #ecfdf5;
+            --info: #3b82f6;
+            --info-light: #eff6ff;
+            --warning: #f59e0b;
+            --warning-light: #fffbeb;
+            --danger: #ef4444;
+            --danger-light: #fef2f2;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: var(--font-family);
+            background-color: var(--bg-body);
+            color: var(--text-dark);
+            min-height: 100vh;
+            display: flex;
+            overflow-x: hidden;
+        }
+
+        /* Sidebar Container */
+        .sidebar {
+            width: 260px;
+            background: #ffffff;
+            border-right: 1px solid var(--border-color);
+            padding: 2rem 1.5rem;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            position: fixed;
+            top: 0;
+            bottom: 0;
+            left: 0;
+            z-index: 100;
+        }
+
+        .logo-container {
+            display: flex;
+            align-items: center;
+            gap: 0.6rem;
+            text-decoration: none;
+            color: var(--text-dark);
+            font-weight: 700;
+            font-size: 1.35rem;
+            margin-bottom: 2rem;
+        }
+
+        .logo-icon {
+            color: var(--primary);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .logo-text span {
+            color: var(--primary);
+        }
+
+        /* Sidebar Navigation */
+        .nav-links {
+            display: flex;
+            flex-direction: column;
+            gap: 0.35rem;
+            list-style: none;
+            flex: 1;
+        }
+
+        .nav-item a {
+            display: flex;
+            align-items: center;
+            gap: 0.85rem;
+            padding: 0.75rem 1rem;
+            color: var(--text-muted);
+            text-decoration: none;
+            font-weight: 600;
+            font-size: 0.95rem;
+            border-radius: 8px;
+            transition: all 0.2s ease;
+        }
+
+        .nav-item a:hover {
+            color: var(--primary);
+            background-color: #f8fafc;
+        }
+
+        .nav-item.active a {
+            color: var(--primary);
+            background-color: var(--primary-light);
+        }
+
+        .nav-icon {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            width: 20px;
+            height: 20px;
+        }
+
+        .inbox-badge {
+            margin-left: auto;
+            background-color: var(--primary);
+            color: #ffffff;
+            font-size: 0.75rem;
+            font-weight: 700;
+            padding: 0.15rem 0.5rem;
+            border-radius: 999px;
+        }
+
+        /* Sidebar User Profile */
+        .sidebar-user {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            padding-top: 1.5rem;
+            border-top: 1px solid var(--border-color);
+            margin-top: 1.5rem;
+        }
+
+        .user-avatar {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            object-fit: cover;
+            border: 1px solid var(--border-color);
+        }
+
+        .user-details {
+            flex: 1;
+            min-width: 0;
+        }
+
+        .user-name {
+            font-size: 0.88rem;
+            font-weight: 700;
+            color: var(--text-dark);
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+        .user-role {
+            font-size: 0.75rem;
+            color: var(--text-muted);
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+        .user-dropdown {
+            color: var(--text-muted);
+            cursor: pointer;
+        }
+
+        /* Main Workspace Content */
+        .main-workspace {
+            margin-left: 260px;
+            flex: 1;
+            padding: 2.2rem 2.5rem;
+            min-width: 0;
+            display: flex;
+            flex-direction: column;
+            gap: 1.5rem;
+        }
+
+        /* Header Breadcrumbs */
+        .workspace-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .header-title-section {
+            display: flex;
+            flex-direction: column;
+            gap: 0.35rem;
+        }
+
+        .workspace-breadcrumbs {
+            font-size: 0.82rem;
+            color: var(--text-muted);
+            font-weight: 550;
+            display: flex;
+            align-items: center;
+            gap: 0.4rem;
+        }
+
+        .workspace-breadcrumbs span {
+            cursor: pointer;
+        }
+
+        .workspace-breadcrumbs span:hover {
+            color: var(--primary);
+        }
+
+        .workspace-breadcrumbs span.active {
+            color: var(--text-dark);
+            font-weight: 600;
+            cursor: default;
+        }
+
+        .header-actions {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+        }
+
+        .search-wrapper {
+            position: relative;
+            width: 260px;
+        }
+
+        .search-input {
+            width: 100%;
+            background-color: #ffffff;
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            padding: 0.6rem 0.8rem 0.6rem 2.3rem;
+            font-family: var(--font-family);
+            font-size: 0.88rem;
+            font-weight: 500;
+            outline: none;
+            transition: all 0.2s ease;
+        }
+
+        .search-input:focus {
+            border-color: var(--primary);
+            box-shadow: 0 0 0 3px rgba(91, 58, 242, 0.1);
+        }
+
+        .search-icon {
+            position: absolute;
+            left: 0.8rem;
+            top: 50%;
+            transform: translateY(-50%);
+            color: var(--text-muted);
+            display: flex;
+            align-items: center;
+        }
+
+        .icon-btn {
+            background-color: #ffffff;
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            width: 38px;
+            height: 38px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--text-dark);
+            cursor: pointer;
+            position: relative;
+        }
+
+        .btn-badge {
+            position: absolute;
+            top: -4px;
+            right: -4px;
+            background-color: var(--primary);
+            color: #ffffff;
+            font-size: 0.7rem;
+            font-weight: 700;
+            width: 16px;
+            height: 16px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .btn-actions-dropdown {
+            background-color: var(--primary);
+            color: #ffffff;
+            border: none;
+            border-radius: 8px;
+            padding: 0.6rem 1.1rem;
+            font-family: var(--font-family);
+            font-size: 0.88rem;
+            font-weight: 650;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 0.4rem;
+        }
+
+        /* Title block */
+        .title-block {
+            display: flex;
+            flex-direction: column;
+            gap: 0.25rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .page-title {
+            font-size: 1.5rem;
+            font-weight: 750;
+            color: var(--text-dark);
+        }
+
+        .page-subtitle {
+            font-size: 0.88rem;
+            color: var(--text-muted);
+            font-weight: 550;
+        }
+
+        /* Filter Controls Bar */
+        .controls-bar {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            background-color: #ffffff;
+            padding: 0.75rem 1.25rem;
+            border-radius: 10px;
+            border: 1px solid var(--border-color);
+            gap: 1.5rem;
+            box-shadow: var(--shadow-sm);
+        }
+
+        .filters-left {
+            display: flex;
+            gap: 0.5rem;
+        }
+
+        .filter-btn {
+            background: none;
+            border: 1px solid transparent;
+            padding: 0.45rem 0.9rem;
+            border-radius: 6px;
+            font-family: var(--font-family);
+            font-size: 0.85rem;
+            font-weight: 600;
+            color: var(--text-muted);
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+
+        .filter-btn:hover {
+            color: var(--text-dark);
+            background-color: #f8fafc;
+        }
+
+        .filter-btn.active {
+            background-color: var(--primary-light);
+            color: var(--primary);
+            border-color: transparent;
+        }
+
+        .sort-select {
+            background: #ffffff;
+            border: 1px solid var(--border-color);
+            border-radius: 6px;
+            padding: 0.45rem 0.8rem;
+            font-family: var(--font-family);
+            font-size: 0.85rem;
+            font-weight: 600;
+            color: var(--text-dark);
+            outline: none;
+            cursor: pointer;
+        }
+
+        /* Main Table Container */
+        .card-table-wrapper {
+            background: #ffffff;
+            border: 1px solid var(--border-color);
+            border-radius: 12px;
+            box-shadow: var(--shadow-sm);
+            overflow: hidden;
+        }
+
+        .leads-table {
+            width: 100%;
+            border-collapse: collapse;
+            text-align: left;
+        }
+
+        .leads-table th {
+            padding: 0.95rem 1.25rem;
+            font-size: 0.8rem;
+            font-weight: 750;
+            color: var(--text-muted);
+            background-color: #f8fafc;
+            border-bottom: 1px solid var(--border-color);
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .leads-table td {
+            padding: 1.1rem 1.25rem;
+            font-size: 0.9rem;
+            border-bottom: 1px solid var(--border-color);
+            color: var(--text-dark);
+        }
+
+        .leads-table tbody tr {
+            cursor: pointer;
+            transition: background-color 0.15s ease;
+        }
+
+        .leads-table tbody tr:hover {
+            background-color: #f8fafc;
+        }
+
+        .leads-table tbody tr:last-child td {
+            border-bottom: none;
+        }
+
+        /* Lead Profile cell */
+        .lead-profile-cell {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+        }
+
+        .lead-avatar {
+            width: 38px;
+            height: 38px;
+            border-radius: 50%;
+            object-fit: cover;
+            border: 1px solid var(--border-color);
+        }
+
+        .avatar-placeholder {
+            width: 38px;
+            height: 38px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #ffffff;
+            font-weight: 700;
+            font-size: 0.85rem;
+        }
+
+        .lead-info {
+            display: flex;
+            flex-direction: column;
+            gap: 0.15rem;
+        }
+
+        .lead-name {
+            font-weight: 700;
+            font-size: 0.92rem;
+        }
+
+        .lead-title-sub {
+            font-size: 0.76rem;
+            color: var(--text-muted);
+            font-weight: 550;
+        }
+
+        /* Company cell */
+        .company-cell {
+            display: flex;
+            flex-direction: column;
+            gap: 0.15rem;
+        }
+
+        .company-name {
+            font-weight: 600;
+            font-size: 0.9rem;
+        }
+
+        .company-industry {
+            font-size: 0.75rem;
+            color: var(--text-muted);
+            font-weight: 550;
+        }
+
+        /* Status badge */
+        .status-badge {
+            font-size: 0.75rem;
+            font-weight: 750;
+            padding: 0.2rem 0.6rem;
+            border-radius: 999px;
+            display: inline-block;
+        }
+
+        .status-badge.new {
+            background-color: var(--info-light);
+            color: var(--info);
+        }
+
+        .status-badge.enriched {
+            background-color: var(--success-light);
+            color: var(--success);
+        }
+
+        .status-badge.contacted {
+            background-color: var(--warning-light);
+            color: var(--warning);
+        }
+
+        .status-badge.interested {
+            background-color: #f5f3ff;
+            color: #8b5cf6;
+        }
+
+        .time-added {
+            color: var(--text-muted);
+            font-size: 0.8rem;
+            font-weight: 550;
+        }
+
+        .action-cell {
+            color: var(--text-muted);
+            text-align: right;
+            padding-right: 1.5rem;
+        }
+
+        .action-cell svg {
+            cursor: pointer;
+            transition: color 0.15s ease;
+        }
+
+        .action-cell svg:hover {
+            color: var(--text-dark);
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Left Sidebar Panel -->
+    <div class="sidebar">
+        <div>
+            <!-- Logo Section -->
+            <a href="dashboard.html" class="logo-container">
+                <span class="logo-icon">
+                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"/>
+                        <polyline points="3.27 6.96 12 12.01 20.73 6.96"/>
+                        <line x1="12" y1="22.08" x2="12" y2="12"/>
+                    </svg>
+                </span>
+                <span class="logo-text">Sales<span>AI</span></span>
+            </a>
+
+            <!-- Navigation Links -->
+            <ul class="nav-links">
+                <li class="nav-item">
+                    <a href="dashboard.html">
+                        <span class="nav-icon">
+                            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+                                <rect x="3" y="3" width="7" height="9"/>
+                                <rect x="14" y="3" width="7" height="5"/>
+                                <rect x="14" y="12" width="7" height="9"/>
+                                <rect x="3" y="16" width="7" height="5"/>
+                            </svg>
+                        </span>
+                        <span class="nav-text">Dashboard</span>
+                    </a>
+                </li>
+                <li class="nav-item active">
+                    <a href="leads.html">
+                        <span class="nav-icon">
+                            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+                                <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/>
+                                <circle cx="9" cy="7" r="4"/>
+                                <path d="M23 21v-2a4 4 0 0 0-3-3.87"/>
+                                <path d="M16 3.13a4 4 0 0 1 0 7.75"/>
+                            </svg>
+                        </span>
+                        <span class="nav-text">Leads</span>
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a href="companies.html">
+                        <span class="nav-icon">
+                            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+                                <path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"/>
+                            </svg>
+                        </span>
+                        <span class="nav-text">Companies</span>
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a href="campaigns.html">
+                        <span class="nav-icon">
+                            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+                                <polygon points="12 2 2 7 12 12 22 7 12 2"/>
+                                <polyline points="2 17 12 22 22 17"/>
+                                <polyline points="2 12 12 17 22 12"/>
+                            </svg>
+                        </span>
+                        <span class="nav-text">Campaigns</span>
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a href="inbox.html">
+                        <span class="nav-icon">
+                            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+                                <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/>
+                            </svg>
+                        </span>
+                        <span class="nav-text">Inbox</span>
+                        <span class="inbox-badge">12</span>
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a href="meetings.html">
+                        <span class="nav-icon">
+                            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+                                <rect x="3" y="4" width="18" height="18" rx="2" ry="2"/>
+                                <line x1="16" y1="2" x2="16" y2="6"/>
+                                <line x1="8" y1="2" x2="8" y2="6"/>
+                                <line x1="3" y1="10" x2="21" y2="10"/>
+                            </svg>
+                        </span>
+                        <span class="nav-text">Meetings</span>
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a href="tasks.html">
+                        <span class="nav-icon">
+                            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+                                <polyline points="9 11 12 14 22 4"/>
+                                <path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"/>
+                            </svg>
+                        </span>
+                        <span class="nav-text">Tasks</span>
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a href="deals.html">
+                        <span class="nav-icon">
+                            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+                                <line x1="12" y1="1" x2="12" y2="23"/>
+                                <path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/>
+                            </svg>
+                        </span>
+                        <span class="nav-text">Deals</span>
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a href="reports.html">
+                        <span class="nav-icon">
+                            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+                                <line x1="18" y1="20" x2="18" y2="10"/>
+                                <line x1="12" y1="20" x2="12" y2="4"/>
+                                <line x1="6" y1="20" x2="6" y2="14"/>
+                            </svg>
+                        </span>
+                        <span class="nav-text">Reports</span>
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a href="settings.html">
+                        <span class="nav-icon">
+                            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+                                <circle cx="12" cy="12" r="3"/>
+                                <path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 1 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 1 1-2.83-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 1 1 2.83-2.83l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1-2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 1 1 2.83 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"/>
+                            </svg>
+                        </span>
+                        <span class="nav-text">Settings</span>
+                    </a>
+                </li>
+            </ul>
+        </div>
+
+        <!-- Sidebar User Profile -->
+        <div class="sidebar-user">
+            <img src="priya_sharma_avatar.png" alt="Priya Sharma" class="user-avatar">
+            <div class="user-details">
+                <div class="user-name">Priya Sharma</div>
+                <div class="user-role">Sales Representative</div>
+            </div>
+            <span class="user-dropdown">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="6 9 12 15 18 9"/></svg>
+            </span>
+        </div>
+    </div>
+
+    <!-- Main Workspace Content Panel -->
+    <div class="main-workspace">
+        
+        <!-- Breadcrumbs Header -->
+        <div class="workspace-header">
+            <div class="header-title-section">
+                <div class="workspace-breadcrumbs">
+                    <span onclick="window.location.href='dashboard.html'">Dashboard</span> &gt; 
+                    <span class="active">Leads</span>
+                </div>
+            </div>
+            <div class="header-actions">
+                <div class="search-wrapper">
+                    <span class="search-icon">
+                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+                    </span>
+                    <input type="text" id="leadTextSearch" placeholder="Search leads, companies..." class="search-input" oninput="filterLeads()">
+                </div>
+                <button class="icon-btn" onclick="alert('No new alerts.')">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/>
+                        <path d="M13.73 21a2 2 0 0 1-3.46 0"/>
+                    </svg>
+                    <span class="btn-badge">6</span>
+                </button>
+                
+                <button class="btn-actions-dropdown" onclick="window.location.href='add-lead.html'">
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+                    New Lead
+                </button>
+            </div>
+        </div>
+
+        <!-- Title Block -->
+        <div class="title-block">
+            <h2 class="page-title">Lead Management</h2>
+            <p class="page-subtitle">View, search, and manage your SalesAI lead database.</p>
+        </div>
+
+        <!-- Filter Controls Bar -->
+        <div class="controls-bar">
+            <div class="filters-left">
+                <button class="filter-btn active" data-status="all" onclick="setStatusFilter('all')">All Leads</button>
+                <button class="filter-btn" data-status="new" onclick="setStatusFilter('new')">New</button>
+                <button class="filter-btn" data-status="enriched" onclick="setStatusFilter('enriched')">Enriched</button>
+                <button class="filter-btn" data-status="contacted" onclick="setStatusFilter('contacted')">Contacted</button>
+                <button class="filter-btn" data-status="interested" onclick="setStatusFilter('interested')">Interested</button>
+            </div>
+            <div>
+                <select class="sort-select" onchange="sortLeads(this.value)">
+                    <option value="recent">Most Recent</option>
+                    <option value="name">Name (A-Z)</option>
+                    <option value="company">Company (A-Z)</option>
+                </select>
+            </div>
+        </div>
+
+        <!-- Card Table Wrapper -->
+        <div class="card-table-wrapper">
+            <table class="leads-table">
+                <thead>
+                    <tr>
+                        <th>Name</th>
+                        <th>Company</th>
+                        <th>Status</th>
+                        <th>Added On</th>
+                        <th></th>
+                    </tr>
+                </thead>
+                <tbody id="leadsTableBody">
+                    <!-- Dynamic rendering in JS -->
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <!-- Script Block -->
+    <script>
+        // Database of Leads
+        let leads = [
+            {
+                name: "Rahul Sharma",
+                title: "CFO",
+                company: "XYZ Logistics",
+                industry: "Logistics",
+                status: "enriched",
+                added: "2 min ago",
+                addedVal: 2,
+                avatar: "rahul_sharma_avatar.png"
+            },
+            {
+                name: "Anita Verma",
+                title: "Finance Manager",
+                company: "ABC Pvt Ltd",
+                industry: "Manufacturing",
+                status: "new",
+                added: "15 min ago",
+                addedVal: 15
+            },
+            {
+                name: "Vikram Patel",
+                title: "Director",
+                company: "SpeedX Couriers",
+                industry: "Logistics",
+                status: "contacted",
+                added: "1 hr ago",
+                addedVal: 60
+            },
+            {
+                name: "Suresh Gupta",
+                title: "CFO",
+                company: "Gati Supply Chain",
+                industry: "Logistics",
+                status: "new",
+                added: "2 hr ago",
+                addedVal: 120
+            },
+            {
+                name: "Neha Singh",
+                title: "Finance Head",
+                company: "Orbit Trans",
+                industry: "Logistics",
+                status: "interested",
+                added: "3 hr ago",
+                addedVal: 180
+            }
+        ];
+
+        let activeStatus = 'all';
+
+        function renderLeads() {
+            const tbody = document.getElementById('leadsTableBody');
+            tbody.innerHTML = '';
+
+            // Filter leads
+            const query = document.getElementById('leadTextSearch').value.toLowerCase().trim();
+            
+            const filtered = leads.filter(l => {
+                const matchesStatus = (activeStatus === 'all' || l.status === activeStatus);
+                const matchesQuery = !query || 
+                                     l.name.toLowerCase().includes(query) || 
+                                     l.company.toLowerCase().includes(query) ||
+                                     l.title.toLowerCase().includes(query);
+                return matchesStatus && matchesQuery;
+            });
+
+            if (filtered.length === 0) {
+                tbody.innerHTML = `<tr><td colspan="5" style="text-align:center; color:var(--text-muted); padding:2rem; font-weight:600;">No leads matching search criteria.</td></tr>`;
+                return;
+            }
+
+            filtered.forEach(l => {
+                const tr = document.createElement('tr');
+                tr.onclick = () => {
+                    window.location.href = `lead-profile.html?name=${encodeURIComponent(l.name)}&company=${encodeURIComponent(l.company)}`;
+                };
+
+                let avatarHTML = '';
+                if (l.avatar) {
+                    avatarHTML = `<img src="${l.avatar}" alt="${l.name}" class="lead-avatar">`;
+                } else {
+                    const initials = l.name.split(' ').map(n => n[0]).join('');
+                    const colors = ['#f43f5e', '#0ea5e9', '#64748b', '#f97316', '#8b5cf6'];
+                    const colorIndex = (l.name.charCodeAt(0) + l.name.charCodeAt(1)) % colors.length;
+                    avatarHTML = `<div class="avatar-placeholder" style="background-color: ${colors[colorIndex]};">${initials}</div>`;
+                }
+
+                const statusLabel = l.status.charAt(0).toUpperCase() + l.status.slice(1);
+
+                tr.innerHTML = `
+                    <td>
+                        <div class="lead-profile-cell">
+                            ${avatarHTML}
+                            <div class="lead-info">
+                                <span class="lead-name">${l.name}</span>
+                                <span class="lead-title-sub">${l.title}</span>
+                            </div>
+                        </div>
+                    </td>
+                    <td>
+                        <div class="company-cell">
+                            <span class="company-name">${l.company}</span>
+                            <span class="company-industry">${l.industry}</span>
+                        </div>
+                    </td>
+                    <td><span class="status-badge ${l.status}">${statusLabel}</span></td>
+                    <td><span class="time-added">${l.added}</span></td>
+                    <td class="action-cell">
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><circle cx="12" cy="12" r="1"/><circle cx="12" cy="5" r="1"/><circle cx="12" cy="19" r="1"/></svg>
+                    </td>
+                `;
+                tbody.appendChild(tr);
+            });
+        }
+
+        function setStatusFilter(status) {
+            activeStatus = status;
+            document.querySelectorAll('.filter-btn').forEach(btn => {
+                if (btn.getAttribute('data-status') === status) {
+                    btn.classList.add('active');
+                } else {
+                    btn.classList.remove('active');
+                }
+            });
+            renderLeads();
+        }
+
+        function sortLeads(criteria) {
+            if (criteria === 'recent') {
+                leads.sort((a, b) => a.addedVal - b.addedVal);
+            } else if (criteria === 'name') {
+                leads.sort((a, b) => a.name.localeCompare(b.name));
+            } else if (criteria === 'company') {
+                leads.sort((a, b) => a.company.localeCompare(b.company));
+            }
+            renderLeads();
+        }
+
+        function filterLeads() {
+            renderLeads();
+        }
+
+        // Check if there's any new lead added via URL param
+        const urlParams = new URLSearchParams(window.location.search);
+        const newName = urlParams.get('name');
+        const newCompany = urlParams.get('company');
+        const newTitle = urlParams.get('title') || 'Lead';
+        const newIndustry = urlParams.get('industry') || 'Logistics';
+
+        if (newName && newCompany) {
+            // Check if already exists
+            if (!leads.some(l => l.name === newName)) {
+                leads.unshift({
+                    name: newName,
+                    title: newTitle,
+                    company: newCompany,
+                    industry: newIndustry,
+                    status: "new",
+                    added: "Just now",
+                    addedVal: 0
+                });
+            }
+        }
+
+        // Initial render
+        renderLeads();
+    </script>
+</body>
+</html>

@@ -1,0 +1,1398 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SalesAI — Meetings</title>
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --primary: #5b3af2;
+            --primary-hover: #4726d9;
+            --primary-light: #eff1fe;
+            --text-dark: #0f172a;
+            --text-muted: #64748b;
+            --bg-body: #f8fafc;
+            --bg-card: #ffffff;
+            --border-color: #e2e8f0;
+            --font-family: 'Plus Jakarta Sans', sans-serif;
+            --shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
+            
+            --success: #10b981;
+            --success-light: #ecfdf5;
+            --info: #3b82f6;
+            --info-light: #eff6ff;
+            --warning: #f59e0b;
+            --warning-light: #fef3c7;
+            --danger: #ef4444;
+            --danger-light: #fef2f2;
+            --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: var(--font-family);
+            background-color: var(--bg-body);
+            color: var(--text-dark);
+            min-height: 100vh;
+            display: flex;
+            overflow-x: hidden;
+        }
+
+        /* Sidebar Container */
+        .sidebar {
+            width: 260px;
+            background: #ffffff;
+            border-right: 1px solid var(--border-color);
+            padding: 2rem 1.5rem;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            position: fixed;
+            top: 0;
+            bottom: 0;
+            left: 0;
+            z-index: 100;
+        }
+
+        .logo-container {
+            display: flex;
+            align-items: center;
+            gap: 0.6rem;
+            text-decoration: none;
+            color: var(--text-dark);
+            font-weight: 700;
+            font-size: 1.35rem;
+            margin-bottom: 2rem;
+        }
+
+        .logo-icon {
+            color: var(--primary);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .logo-text span {
+            color: var(--primary);
+        }
+
+        /* Sidebar Navigation */
+        .nav-links {
+            display: flex;
+            flex-direction: column;
+            gap: 0.35rem;
+            list-style: none;
+            flex: 1;
+        }
+
+        .nav-item a {
+            display: flex;
+            align-items: center;
+            gap: 0.85rem;
+            padding: 0.75rem 1rem;
+            color: var(--text-muted);
+            text-decoration: none;
+            font-weight: 600;
+            font-size: 0.95rem;
+            border-radius: 8px;
+            transition: all 0.2s ease;
+        }
+
+        .nav-item a:hover {
+            color: var(--primary);
+            background-color: #f8fafc;
+        }
+
+        .nav-item.active a {
+            color: var(--primary);
+            background-color: var(--primary-light);
+        }
+
+        .nav-icon {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            width: 20px;
+            height: 20px;
+        }
+
+        .inbox-badge {
+            margin-left: auto;
+            background-color: var(--primary);
+            color: #ffffff;
+            font-size: 0.75rem;
+            font-weight: 700;
+            padding: 0.15rem 0.5rem;
+            border-radius: 999px;
+        }
+
+        /* Sidebar User Profile */
+        .sidebar-user {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            padding-top: 1.5rem;
+            border-top: 1px solid var(--border-color);
+            margin-top: 1.5rem;
+        }
+
+        .user-avatar {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            object-fit: cover;
+            border: 1px solid var(--border-color);
+        }
+
+        .user-details {
+            flex: 1;
+            min-width: 0;
+        }
+
+        .user-name {
+            font-size: 0.88rem;
+            font-weight: 700;
+            color: var(--text-dark);
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+        .user-role {
+            font-size: 0.75rem;
+            color: var(--text-muted);
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+        .user-dropdown {
+            color: var(--text-muted);
+            cursor: pointer;
+        }
+
+        /* Main Workspace Content */
+        .main-workspace {
+            margin-left: 260px;
+            flex: 1;
+            padding: 2.2rem 2.5rem;
+            min-width: 0;
+            display: flex;
+            flex-direction: column;
+            gap: 1.5rem;
+        }
+
+        /* Header Breadcrumbs */
+        .workspace-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .header-title-section {
+            display: flex;
+            flex-direction: column;
+            gap: 0.35rem;
+        }
+
+        .workspace-breadcrumbs {
+            font-size: 0.82rem;
+            color: var(--text-muted);
+            font-weight: 500;
+            display: flex;
+            align-items: center;
+            gap: 0.4rem;
+        }
+
+        .workspace-breadcrumbs span {
+            cursor: pointer;
+        }
+
+        .workspace-breadcrumbs span:hover {
+            color: var(--primary);
+        }
+
+        .workspace-breadcrumbs span.active {
+            color: var(--text-dark);
+            font-weight: 600;
+            cursor: default;
+        }
+
+        .header-actions {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+        }
+
+        .search-wrapper {
+            position: relative;
+            width: 260px;
+        }
+
+        .search-input {
+            width: 100%;
+            background-color: #ffffff;
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            padding: 0.6rem 0.8rem 0.6rem 2.3rem;
+            font-family: var(--font-family);
+            font-size: 0.88rem;
+            font-weight: 500;
+            outline: none;
+            transition: all 0.2s ease;
+        }
+
+        .search-input:focus {
+            border-color: var(--primary);
+            box-shadow: 0 0 0 3px rgba(91, 58, 242, 0.1);
+        }
+
+        .search-icon {
+            position: absolute;
+            left: 0.8rem;
+            top: 50%;
+            transform: translateY(-50%);
+            color: var(--text-muted);
+            display: flex;
+            align-items: center;
+        }
+
+        .icon-btn {
+            background-color: #ffffff;
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            width: 38px;
+            height: 38px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--text-dark);
+            cursor: pointer;
+            position: relative;
+        }
+
+        .btn-badge {
+            position: absolute;
+            top: -4px;
+            right: -4px;
+            background-color: var(--primary);
+            color: #ffffff;
+            font-size: 0.7rem;
+            font-weight: 700;
+            width: 16px;
+            height: 16px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .btn-actions-dropdown {
+            background-color: var(--primary);
+            color: #ffffff;
+            border: none;
+            border-radius: 8px;
+            padding: 0.6rem 1.1rem;
+            font-family: var(--font-family);
+            font-size: 0.88rem;
+            font-weight: 600;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 0.4rem;
+        }
+
+        /* Title block */
+        .title-block {
+            display: flex;
+            flex-direction: column;
+            gap: 0.25rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .page-title {
+            font-size: 1.5rem;
+            font-weight: 750;
+            color: var(--text-dark);
+        }
+
+        .page-subtitle {
+            font-size: 0.88rem;
+            color: var(--text-muted);
+            font-weight: 550;
+        }
+
+        /* Tab row */
+        .tabs-row {
+            display: flex;
+            gap: 1.5rem;
+            border-bottom: 1px solid var(--border-color);
+            padding-bottom: 0.5rem;
+        }
+
+        .tab-item {
+            font-size: 0.88rem;
+            font-weight: 700;
+            color: var(--text-muted);
+            cursor: pointer;
+            padding-bottom: 0.5rem;
+            position: relative;
+        }
+
+        .tab-item.active {
+            color: var(--primary);
+        }
+
+        .tab-item.active::after {
+            content: '';
+            position: absolute;
+            bottom: -0.55rem;
+            left: 0;
+            right: 0;
+            height: 2px;
+            background-color: var(--primary);
+        }
+
+        /* Filter Controls bar */
+        .controls-bar {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            background-color: #ffffff;
+            border: 1px solid var(--border-color);
+            border-radius: 10px;
+            padding: 0.75rem 1rem;
+            gap: 1rem;
+        }
+
+        .controls-left {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            flex: 1;
+        }
+
+        .dropdown-select {
+            border: 1px solid var(--border-color);
+            background-color: #ffffff;
+            color: var(--text-dark);
+            padding: 0.5rem 2rem 0.5rem 0.85rem;
+            border-radius: 8px;
+            font-family: var(--font-family);
+            font-size: 0.84rem;
+            font-weight: 650;
+            outline: none;
+            cursor: pointer;
+            appearance: none;
+            position: relative;
+        }
+
+        .select-wrapper {
+            position: relative;
+        }
+
+        .select-arrow {
+            position: absolute;
+            right: 0.75rem;
+            top: 50%;
+            transform: translateY(-50%);
+            color: var(--text-muted);
+            pointer-events: none;
+            display: flex;
+            align-items: center;
+        }
+
+        .btn-filter-outline {
+            background-color: #ffffff;
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            padding: 0.5rem 1rem;
+            color: var(--text-dark);
+            font-family: var(--font-family);
+            font-size: 0.84rem;
+            font-weight: 700;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 0.4rem;
+        }
+
+        /* Table Card styling */
+        .card-table-wrapper {
+            background-color: #ffffff;
+            border: 1px solid var(--border-color);
+            border-radius: 12px;
+            overflow: hidden;
+            box-shadow: var(--shadow-sm);
+        }
+
+        .leads-table {
+            width: 100%;
+            border-collapse: collapse;
+            text-align: left;
+        }
+
+        .leads-table th {
+            background-color: #f8fafc;
+            border-bottom: 1px solid var(--border-color);
+            padding: 0.85rem 1.25rem;
+            color: var(--text-muted);
+            font-size: 0.78rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .leads-table td {
+            padding: 1.1rem 1.25rem;
+            border-bottom: 1px solid var(--border-color);
+            font-size: 0.86rem;
+            font-weight: 600;
+            color: var(--text-dark);
+            vertical-align: middle;
+        }
+
+        .clickable-row {
+            cursor: pointer;
+            transition: background-color 0.2s;
+        }
+
+        .clickable-row:hover {
+            background-color: #f8fafc;
+        }
+
+        .action-cell-btn {
+            background: none;
+            border: none;
+            color: var(--text-muted);
+            cursor: pointer;
+            padding: 0.25rem;
+        }
+
+        .action-cell-btn:hover {
+            color: var(--text-dark);
+        }
+
+        .status-badge-meeting {
+            background-color: var(--info-light);
+            color: var(--info);
+            font-size: 0.74rem;
+            font-weight: 750;
+            padding: 0.2rem 0.55rem;
+            border-radius: 6px;
+        }
+
+        .status-badge-meeting.completed {
+            background-color: var(--success-light);
+            color: var(--success);
+        }
+
+        .status-badge-meeting.cancelled {
+            background-color: var(--danger-light);
+            color: var(--danger);
+        }
+
+        .owner-avatar-wrapper {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .owner-small-pic {
+            width: 24px;
+            height: 24px;
+            border-radius: 50%;
+            object-fit: cover;
+        }
+
+        /* Footer Pagination controls */
+        .table-footer {
+            padding: 1rem 1.25rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            background-color: #ffffff;
+        }
+
+        .footer-info {
+            font-size: 0.82rem;
+            color: var(--text-muted);
+            font-weight: 550;
+        }
+
+        .pagination-controls {
+            display: flex;
+            align-items: center;
+            gap: 1.5rem;
+        }
+
+        .pages-list {
+            display: flex;
+            gap: 0.35rem;
+            list-style: none;
+        }
+
+        .page-num {
+            width: 28px;
+            height: 28px;
+            border-radius: 6px;
+            border: 1px solid var(--border-color);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 0.82rem;
+            font-weight: 700;
+            color: var(--text-dark);
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .page-num:hover {
+            border-color: var(--primary);
+            color: var(--primary);
+        }
+
+        .page-num.active {
+            background-color: var(--primary);
+            color: #ffffff;
+            border-color: var(--primary);
+        }
+
+        .rows-selector-block {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            font-size: 0.82rem;
+            color: var(--text-muted);
+            font-weight: 550;
+        }
+
+        /* Priority Badge styling */
+        .priority-badge {
+            font-size: 0.75rem;
+            font-weight: 700;
+            padding: 0.2rem 0.55rem;
+            border-radius: 4px;
+            display: inline-block;
+        }
+
+        .priority-badge.high {
+            background-color: var(--danger-light);
+            color: var(--danger);
+        }
+
+        .priority-badge.medium {
+            background-color: var(--warning-light);
+            color: var(--warning);
+        }
+
+        .priority-badge.low {
+            background-color: var(--info-light);
+            color: var(--info);
+        }
+
+        /* Custom Dialog Modal overlays (identical to dashboard.html design) */
+        .modal-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(15, 23, 42, 0.4);
+            backdrop-filter: blur(4px);
+            z-index: 200;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            opacity: 0;
+            pointer-events: none;
+            transition: opacity 0.3s ease;
+        }
+
+        .modal-overlay.active {
+            opacity: 1;
+            pointer-events: auto;
+        }
+
+        .modal-container {
+            background: #ffffff;
+            width: 100%;
+            max-width: 480px;
+            border-radius: 16px;
+            padding: 2rem;
+            box-shadow: var(--shadow-lg);
+            display: flex;
+            flex-direction: column;
+            gap: 1.5rem;
+            transform: scale(0.9);
+            transition: transform 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+        }
+
+        .modal-overlay.active .modal-container {
+            transform: scale(1);
+        }
+
+        .modal-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .modal-title {
+            font-size: 1.25rem;
+            font-weight: 700;
+            color: var(--text-dark);
+        }
+
+        .btn-close-modal {
+            background: none;
+            border: none;
+            color: var(--text-muted);
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+        }
+
+        .btn-close-modal:hover {
+            color: var(--text-dark);
+        }
+
+        .modal-form {
+            display: flex;
+            flex-direction: column;
+            gap: 1.2rem;
+        }
+
+        .modal-form-group {
+            display: flex;
+            flex-direction: column;
+            gap: 0.4rem;
+        }
+
+        .modal-form-group label {
+            font-size: 0.85rem;
+            font-weight: 600;
+            color: var(--text-dark);
+        }
+
+        .modal-form-group input,
+        .modal-form-group select {
+            padding: 0.7rem 0.9rem;
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            font-family: var(--font-family);
+            font-size: 0.9rem;
+            outline: none;
+            background: #ffffff;
+            transition: border-color 0.2s;
+        }
+
+        .modal-form-group input:focus,
+        .modal-form-group select:focus {
+            border-color: var(--primary);
+        }
+
+        .modal-form-buttons {
+            display: flex;
+            justify-content: flex-end;
+            gap: 0.75rem;
+            margin-top: 0.5rem;
+        }
+
+        .btn-cancel {
+            padding: 0.65rem 1.2rem;
+            background: #ffffff;
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            font-family: var(--font-family);
+            font-size: 0.88rem;
+            font-weight: 600;
+            cursor: pointer;
+        }
+
+        .btn-submit {
+            padding: 0.65rem 1.2rem;
+            background: var(--primary);
+            color: #ffffff;
+            border: none;
+            border-radius: 8px;
+            font-family: var(--font-family);
+            font-size: 0.88rem;
+            font-weight: 600;
+            cursor: pointer;
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Left Sidebar Panel -->
+    <div class="sidebar">
+        <div>
+            <!-- Logo Section -->
+            <a href="dashboard.html" class="logo-container">
+                <span class="logo-icon">
+                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"/>
+                        <polyline points="3.27 6.96 12 12.01 20.73 6.96"/>
+                        <line x1="12" y1="22.08" x2="12" y2="12"/>
+                    </svg>
+                </span>
+                <span class="logo-text">Sales<span>AI</span></span>
+            </a>
+
+            <!-- Navigation Links -->
+            <ul class="nav-links">
+                <li class="nav-item">
+                    <a href="dashboard.html">
+                        <span class="nav-icon">
+                            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+                                <rect x="3" y="3" width="7" height="9"/>
+                                <rect x="14" y="3" width="7" height="5"/>
+                                <rect x="14" y="12" width="7" height="9"/>
+                                <rect x="3" y="16" width="7" height="5"/>
+                            </svg>
+                        </span>
+                        <span class="nav-text">Dashboard</span>
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a href="leads.html">
+                        <span class="nav-icon">
+                            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+                                <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/>
+                                <circle cx="9" cy="7" r="4"/>
+                                <path d="M23 21v-2a4 4 0 0 0-3-3.87"/>
+                                <path d="M16 3.13a4 4 0 0 1 0 7.75"/>
+                            </svg>
+                        </span>
+                        <span class="nav-text">Leads</span>
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a href="companies.html">
+                        <span class="nav-icon">
+                            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+                                <path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"/>
+                            </svg>
+                        </span>
+                        <span class="nav-text">Companies</span>
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a href="campaigns.html">
+                        <span class="nav-icon">
+                            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+                                <polygon points="12 2 2 7 12 12 22 7 12 2"/>
+                                <polyline points="2 17 12 22 22 17"/>
+                                <polyline points="2 12 12 17 22 12"/>
+                            </svg>
+                        </span>
+                        <span class="nav-text">Campaigns</span>
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a href="inbox.html">
+                        <span class="nav-icon">
+                            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+                                <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/>
+                            </svg>
+                        </span>
+                        <span class="nav-text">Inbox</span>
+                        <span class="inbox-badge">12</span>
+                    </a>
+                </li>
+                <li class="nav-item active">
+                    <a href="meetings.html">
+                        <span class="nav-icon">
+                            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+                                <rect x="3" y="4" width="18" height="18" rx="2" ry="2"/>
+                                <line x1="16" y1="2" x2="16" y2="6"/>
+                                <line x1="8" y1="2" x2="8" y2="6"/>
+                                <line x1="3" y1="10" x2="21" y2="10"/>
+                            </svg>
+                        </span>
+                        <span class="nav-text">Meetings</span>
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a href="tasks.html">
+                        <span class="nav-icon">
+                            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+                                <polyline points="9 11 12 14 22 4"/>
+                                <path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"/>
+                            </svg>
+                        </span>
+                        <span class="nav-text">Tasks</span>
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a href="deals.html">
+                        <span class="nav-icon">
+                            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+                                <line x1="12" y1="1" x2="12" y2="23"/>
+                                <path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/>
+                            </svg>
+                        </span>
+                        <span class="nav-text">Deals</span>
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a href="reports.html">
+                        <span class="nav-icon">
+                            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+                                <line x1="18" y1="20" x2="18" y2="10"/>
+                                <line x1="12" y1="20" x2="12" y2="4"/>
+                                <line x1="6" y1="20" x2="6" y2="14"/>
+                            </svg>
+                        </span>
+                        <span class="nav-text">Reports</span>
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a href="settings.html">
+                        <span class="nav-icon">
+                            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+                                <circle cx="12" cy="12" r="3"/>
+                                <path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 1 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 1 1-2.83-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 1 1 2.83-2.83l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1-2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 1 1 2.83 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"/>
+                            </svg>
+                        </span>
+                        <span class="nav-text">Settings</span>
+                    </a>
+                </li>
+            </ul>
+        </div>
+
+        <!-- Sidebar User Profile -->
+        <div class="sidebar-user">
+            <img src="priya_sharma_avatar.png" alt="Priya Sharma" class="user-avatar">
+            <div class="user-details">
+                <div class="user-name">Priya Sharma</div>
+                <div class="user-role">Sales Representative</div>
+            </div>
+            <span class="user-dropdown">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="6 9 12 15 18 9"/></svg>
+            </span>
+        </div>
+    </div>
+
+    <!-- Main Workspace Content Panel -->
+    <div class="main-workspace">
+        
+        <!-- Breadcrumbs Header -->
+        <div class="workspace-header">
+            <div class="header-title-section">
+                <div class="workspace-breadcrumbs">
+                    <span onclick="window.location.href='dashboard.html'">Dashboard</span> &gt; 
+                    <span class="active">Meetings</span>
+                </div>
+            </div>
+            <div class="header-actions">
+                <div class="search-wrapper">
+                    <span class="search-icon">
+                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+                    </span>
+                    <input type="text" placeholder="Search meetings..." class="search-input">
+                </div>
+                <button class="icon-btn" onclick="alert('No new alerts.')">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/>
+                        <path d="M13.73 21a2 2 0 0 1-3.46 0"/>
+                    </svg>
+                    <span class="btn-badge">6</span>
+                </button>
+                <button class="icon-btn" onclick="alert('View Calendar dashboard.')">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+                        <rect x="3" y="4" width="18" height="18" rx="2" ry="2"/>
+                        <line x1="16" y1="2" x2="16" y2="6"/>
+                        <line x1="8" y1="2" x2="8" y2="6"/>
+                        <line x1="3" y1="10" x2="21" y2="10"/>
+                    </svg>
+                </button>
+                
+                <button class="btn-actions-dropdown" onclick="openNewMeetingModal()">
+                    + New Meeting
+                </button>
+            </div>
+        </div>
+
+        <!-- Title Block -->
+        <div class="title-block">
+            <h2 class="page-title">Meetings</h2>
+            <p class="page-subtitle">Track and manage all your meetings and calls.</p>
+        </div>
+
+        <!-- Tabs Row -->
+        <div class="tabs-row" id="statusTabs">
+            <span class="tab-item active" data-status="Upcoming">Upcoming</span>
+            <span class="tab-item" data-status="Completed">Completed</span>
+            <span class="tab-item" data-status="Cancelled">Cancelled</span>
+        </div>
+
+        <!-- Controls Bar -->
+        <div class="controls-bar">
+            <div class="controls-left">
+                <div class="search-wrapper" style="width:200px;">
+                    <span class="search-icon">
+                        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+                    </span>
+                    <input type="text" id="searchFilter" placeholder="Search meetings..." class="search-input" style="padding: 0.45rem 0.8rem 0.45rem 2.1rem; font-size:0.8rem;">
+                </div>
+
+                <div class="select-wrapper">
+                    <select class="dropdown-select" id="dateFilter">
+                        <option value="">All Dates</option>
+                        <option value="may">May 2024</option>
+                        <option value="upcoming">Future</option>
+                    </select>
+                    <span class="select-arrow">
+                        <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><polyline points="6 9 12 15 18 9"/></svg>
+                    </span>
+                </div>
+
+                <div class="select-wrapper">
+                    <select class="dropdown-select" id="typeFilter">
+                        <option value="">All Types</option>
+                        <option value="demo">Demo</option>
+                        <option value="call">Call</option>
+                        <option value="meeting">Meeting</option>
+                    </select>
+                    <span class="select-arrow">
+                        <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><polyline points="6 9 12 15 18 9"/></svg>
+                    </span>
+                </div>
+
+                <div class="select-wrapper">
+                    <select class="dropdown-select" id="priorityFilter">
+                        <option value="">All Priorities</option>
+                        <option value="high">High</option>
+                        <option value="medium">Medium</option>
+                        <option value="low">Low</option>
+                    </select>
+                    <span class="select-arrow">
+                        <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><polyline points="6 9 12 15 18 9"/></svg>
+                    </span>
+                </div>
+
+                <button class="btn-filter-outline" onclick="resetFilters()">
+                    Reset Filters
+                </button>
+            </div>
+        </div>
+
+        <!-- Table View -->
+        <div class="card-table-wrapper">
+            <table class="leads-table">
+                <thead>
+                    <tr>
+                        <th>Title</th>
+                        <th>With</th>
+                        <th>Type</th>
+                        <th>Date & Time</th>
+                        <th>Priority</th>
+                        <th>Owner</th>
+                        <th>Status</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody id="meetingsTableBody">
+                    <!-- Dynamic Rows Rendered by JS -->
+                </tbody>
+            </table>
+
+            <div class="table-footer">
+                <span class="footer-info">Showing 1 to 5 of 5 meetings</span>
+                <div class="pagination-controls">
+                    <div class="rows-selector-block">
+                        <span>Rows per page:</span>
+                        <select style="border:1px solid var(--border-color); border-radius:4px; padding:0.15rem 0.35rem; font-family:var(--font-family); font-weight:600;">
+                            <option value="5" selected>5</option>
+                            <option value="10">10</option>
+                        </select>
+                    </div>
+                    
+                    <ul class="pages-list">
+                        <li class="page-num active">1</li>
+                        <li class="page-num">2</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- New Meeting Modal Overlay -->
+    <div class="modal-overlay" id="newMeetingModalOverlay">
+        <div class="modal-container">
+            <div class="modal-header">
+                <h3 class="modal-title">Schedule New Meeting</h3>
+                <button class="btn-close-modal" onclick="closeNewMeetingModal()">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+                </button>
+            </div>
+            <form class="modal-form" id="newMeetingForm" onsubmit="saveNewMeeting(event)">
+                <div class="modal-form-group">
+                    <label for="mTitle">Meeting Title</label>
+                    <input type="text" id="mTitle" required placeholder="e.g. Product Demo">
+                </div>
+                <div class="modal-form-group">
+                    <label for="mWith">Participant / Company</label>
+                    <input type="text" id="mWith" required placeholder="e.g. XYZ Logistics (Rahul Sharma)">
+                </div>
+                <div class="modal-form-group">
+                    <label for="mType">Meeting Type</label>
+                    <select id="mType" required>
+                        <option value="Demo">Demo</option>
+                        <option value="Call">Call</option>
+                        <option value="Meeting">Meeting</option>
+                    </select>
+                </div>
+                <div class="modal-form-group">
+                    <label for="mDateTime">Date & Time</label>
+                    <input type="text" id="mDateTime" required placeholder="e.g. 23 May 2024, 03:00 PM">
+                </div>
+                <div class="modal-form-group">
+                    <label for="mPriority">Priority</label>
+                    <select id="mPriority" required>
+                        <option value="High">High</option>
+                        <option value="Medium">Medium</option>
+                        <option value="Low">Low</option>
+                    </select>
+                </div>
+                <div class="modal-form-group">
+                    <label for="mAgenda">Agenda / AI Briefing Context</label>
+                    <textarea id="mAgenda" rows="3" placeholder="AI will generate a brief from this info..." style="padding: 0.7rem 0.9rem; border: 1px solid var(--border-color); border-radius: 8px; font-family: var(--font-family); font-size: 0.9rem; outline: none; background: #ffffff; resize: none;"></textarea>
+                </div>
+                <div class="modal-form-buttons">
+                    <button type="button" class="btn-cancel" onclick="closeNewMeetingModal()">Cancel</button>
+                    <button type="submit" class="btn-submit">Schedule</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Meeting Details & AI Summary Modal Overlay -->
+    <div class="modal-overlay" id="meetingDetailsModalOverlay">
+        <div class="modal-container" style="max-width: 550px;">
+            <div class="modal-header">
+                <h3 class="modal-title" id="mdTitle">Meeting Details</h3>
+                <button class="btn-close-modal" onclick="closeMeetingDetailsModal()">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+                </button>
+            </div>
+            <div style="display: flex; flex-direction: column; gap: 1rem;">
+                <div style="display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid var(--border-color); padding-bottom: 0.75rem;">
+                    <div>
+                        <div style="font-size: 0.8rem; color: var(--text-muted); font-weight: 600;">WITH</div>
+                        <div style="font-weight: 700; color: var(--text-dark);" id="mdWith">XYZ Logistics (Rahul Sharma)</div>
+                    </div>
+                    <div>
+                        <div style="font-size: 0.8rem; color: var(--text-muted); font-weight: 600; text-align: right;">TYPE</div>
+                        <div style="font-weight: 700; color: var(--primary); text-align: right;" id="mdType">Demo</div>
+                    </div>
+                </div>
+                <div style="display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid var(--border-color); padding-bottom: 0.75rem;">
+                    <div>
+                        <div style="font-size: 0.8rem; color: var(--text-muted); font-weight: 600;">DATE & TIME</div>
+                        <div style="font-weight: 700; color: var(--text-dark);" id="mdDateTime">23 May 2024, 03:00 PM</div>
+                    </div>
+                    <div>
+                        <div style="font-size: 0.8rem; color: var(--text-muted); font-weight: 600; text-align: right;">PRIORITY</div>
+                        <div style="text-align: right;" id="mdPriorityBadge"><span class="priority-badge high">High</span></div>
+                    </div>
+                </div>
+                
+                <!-- AI SUMMARY SECTION -->
+                <div id="mdSummarySection" style="background-color: var(--primary-light); border-radius: 12px; padding: 1.25rem; display: flex; flex-direction: column; gap: 0.5rem; border: 1px solid rgba(91, 58, 242, 0.15);">
+                    <div style="display: flex; align-items: center; gap: 0.5rem; color: var(--primary); font-weight: 750; font-size: 0.9rem;">
+                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
+                        AI Summary & Discussion Guide
+                    </div>
+                    <div id="mdSummary" style="font-size: 0.88rem; line-height: 1.5; color: var(--text-dark); white-space: pre-wrap; font-weight: 550;">
+                        AI Pre-meeting Brief:
+• Objective: Showcase branch accounting automation.
+• Key Pain Points: CFO wants to automate branch accounting and reduce month-end closing times.
+                    </div>
+                </div>
+            </div>
+            <div class="modal-form-buttons">
+                <button type="button" class="btn-cancel" onclick="closeMeetingDetailsModal()" style="background: var(--primary); color: #ffffff; border: none;">Close</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Initial Seed Data (2 meetings completed, others upcoming)
+        const defaultMeetings = [
+            {
+                id: "m1",
+                title: "Product Demo",
+                with: "XYZ Logistics (Rahul Sharma)",
+                type: "Demo",
+                dateTime: "23 May 2024, 03:00 PM",
+                owner: "Priya Sharma",
+                status: "Upcoming",
+                priority: "High",
+                summary: "AI Pre-meeting Brief:\n• Objective: Showcase branch accounting automation and month-end consolidation capabilities.\n• Key Pain Points: CFO wants to automate branch-level accounting and reduce month-end closing latency (currently 12 days).\n• Sentiment: Highly positive (88% intent score).\n• Recommended Agenda:\n  1. Brief introduction & logistics context (5 mins)\n  2. Live demo of consolidated multi-branch dashboard (15 mins)\n  3. Review pricing models and implementation timeline (10 mins)"
+            },
+            {
+                id: "m2",
+                title: "Discovery Call",
+                with: "TechNova Solutions (Amit Verma)",
+                type: "Call",
+                dateTime: "22 May 2024, 11:00 AM",
+                owner: "Priya Sharma",
+                status: "Completed",
+                priority: "Medium",
+                summary: "AI Post-Meeting Summary & Insights:\n\n📝 Conversation Overview:\nDuring the call, Amit Verma explained that TechNova's outbound sales team is facing severe email bounce rates (currently over 14%) and spending 15+ hours per week manually researching contact info on LinkedIn. They need a bulk enrichment tool that integrates directly with their CRM system to verify emails in real-time before scheduling outbound campaigns.\n\n💡 Key Pain Points Discussed:\n1. Contact Data Decay: Lead lists purchased from third-party vendors are outdated, resulting in low campaign engagement.\n2. Workflow Inefficiency: Sales reps are copy-pasting lead details from Google search into spreadsheets instead of calling leads.\n\n✨ AI Suggestions & Recommended Actions:\n• Action Item 1: Send Amit a personalized API demo key so their developer can test our real-time email verification endpoint.\n• Action Item 2: Propose our 'Growth Plan' tier which includes up to 10,000 monthly enrichment credits and native CRM sync.\n• Next Meeting: Schedule a 15-minute developer check-in to review technical integration questions."
+            },
+            {
+                id: "m3",
+                title: "Follow-up Meeting",
+                with: "Global Enterprises (Neha Patel)",
+                type: "Meeting",
+                dateTime: "21 May 2024, 04:30 PM",
+                owner: "Amit Verma",
+                status: "Upcoming",
+                priority: "Medium",
+                summary: "AI Pre-meeting Brief:\n• Objective: Follow up post proposal submission.\n• Key Pain Points: Pricing flexibility and volume discounts.\n• Sentiment: Positive."
+            },
+            {
+                id: "m4",
+                title: "Proposal Discussion",
+                with: "Bright Future Ltd. (Vikram Singh)",
+                type: "Meeting",
+                dateTime: "20 May 2024, 02:00 PM",
+                owner: "Priya Sharma",
+                status: "Upcoming",
+                priority: "High",
+                summary: "AI Pre-meeting Brief:\n• Objective: Finalize proposal terms.\n• Key Pain Points: Dedicated support SLAs.\n• Sentiment: High."
+            },
+            {
+                id: "m5",
+                title: "Onboarding Call",
+                with: "NextGen Retail (Sandeep Rao)",
+                type: "Call",
+                dateTime: "19 May 2024, 10:30 AM",
+                owner: "Amit Verma",
+                status: "Completed",
+                priority: "Low",
+                summary: "AI Post-Meeting Summary & Insights:\n\n📝 Conversation Overview:\nWe successfully completed the kickoff onboarding session with Sandeep Rao and NextGen's marketing team. Sandeep highlighted that their primary goal is transitioning campaign analytics from their old dashboard by the end of this billing cycle. They require a customized report structure to avoid breaking internal analytics pipelines.\n\n💡 Key Pain Points Discussed:\n1. Legacy Data Mapping: They need a customized CSV export layout matching their internal formatting exactly.\n2. Reporting Sync Frequency: Campaign analytics must sync automatically every Monday at 6:00 AM.\n\n✨ AI Suggestions & Recommended Actions:\n• Action Item 1: Create a customized campaign export template based on the CSV schema they share.\n• Action Item 2: Assist their admin team in setting up the automatic scheduler for Monday mornings.\n• Next Meeting: Host a brief weekly follow-up sync to monitor team adoption and resolve mapping issues."
+            }
+        ];
+
+        let activeStatusTab = "Upcoming";
+
+        // LocalStorage initialization
+        function getMeetings() {
+            let stored = localStorage.getItem('scheduled_meetings');
+            if (stored) {
+                let parsed = JSON.parse(stored);
+                const m2 = parsed.find(m => m.id === 'm2');
+                // Force update if the summary does not contain our new custom transcript headers
+                if (m2 && (!m2.summary || !m2.summary.includes('📝 Conversation Overview'))) {
+                    localStorage.setItem('scheduled_meetings', JSON.stringify(defaultMeetings));
+                    return defaultMeetings;
+                }
+                return parsed;
+            }
+            localStorage.setItem('scheduled_meetings', JSON.stringify(defaultMeetings));
+            return defaultMeetings;
+        }
+
+        function saveMeetings(meetingsList) {
+            localStorage.setItem('scheduled_meetings', JSON.stringify(meetingsList));
+        }
+
+        // Modal Control functions
+        function openNewMeetingModal() {
+            document.getElementById('newMeetingModalOverlay').classList.add('active');
+        }
+        
+        function closeNewMeetingModal() {
+            document.getElementById('newMeetingModalOverlay').classList.remove('active');
+            document.getElementById('newMeetingForm').reset();
+        }
+
+        function openMeetingDetailsModal(meetingId) {
+            const meetings = getMeetings();
+            const meeting = meetings.find(m => m.id === meetingId);
+            if (!meeting) return;
+
+            document.getElementById('mdTitle').innerText = meeting.title;
+            document.getElementById('mdWith').innerText = meeting.with;
+            document.getElementById('mdType').innerText = meeting.type;
+            document.getElementById('mdDateTime').innerText = meeting.dateTime;
+            
+            const priorityHtml = `<span class="priority-badge ${meeting.priority.toLowerCase()}">${meeting.priority}</span>`;
+            document.getElementById('mdPriorityBadge').innerHTML = priorityHtml;
+            
+            // Conditional Summary rendering: Only display AI Summary for Completed meetings
+            if (meeting.status === 'Completed') {
+                document.getElementById('mdSummarySection').style.display = 'flex';
+                document.getElementById('mdSummary').innerText = meeting.summary || "AI Pre-meeting Brief:\n• Objective: General discussion.\n• Key Pain Points: Not specified.\n• Sentiment: Neutral.\n• Recommended Agenda: Walk through high-level alignment.";
+            } else {
+                document.getElementById('mdSummarySection').style.display = 'none';
+            }
+            
+            document.getElementById('meetingDetailsModalOverlay').classList.add('active');
+        }
+
+        function closeMeetingDetailsModal() {
+            document.getElementById('meetingDetailsModalOverlay').classList.remove('active');
+        }
+
+        function saveNewMeeting(event) {
+            event.preventDefault();
+            const title = document.getElementById('mTitle').value;
+            const withVal = document.getElementById('mWith').value;
+            const type = document.getElementById('mType').value;
+            const dateTime = document.getElementById('mDateTime').value;
+            const priority = document.getElementById('mPriority').value;
+            const agenda = document.getElementById('mAgenda').value;
+
+            // Construct summary from agenda input
+            const summary = `AI Pre-meeting Brief:
+• Objective: ${title} to discuss requirements.
+• Key Pain Points: ${agenda || "Analyze specific business requirements."}
+• Sentiment: Positive (78% engagement intent).
+• Recommended Agenda:
+  1. Overview & discovery (10 mins)
+  2. Discuss specific pain points (10 mins)
+  3. Propose next steps (10 mins)`;
+
+            const newMeeting = {
+                id: 'm_' + Date.now(),
+                title,
+                with: withVal,
+                type,
+                dateTime,
+                owner: 'Priya Sharma',
+                status: 'Upcoming',
+                priority,
+                summary
+            };
+
+            const currentList = getMeetings();
+            currentList.unshift(newMeeting); // Add to the top
+            saveMeetings(currentList);
+            closeNewMeetingModal();
+            renderMeetings();
+        }
+
+        // Search and Filter logic
+        function renderMeetings() {
+            const searchVal = document.getElementById('searchFilter').value.toLowerCase();
+            const dateVal = document.getElementById('dateFilter').value;
+            const typeVal = document.getElementById('typeFilter').value;
+            const priorityVal = document.getElementById('priorityFilter').value;
+
+            const meetingsList = getMeetings();
+            const filtered = meetingsList.filter(m => {
+                const matchesStatus = m.status === activeStatusTab;
+                const matchesSearch = m.title.toLowerCase().includes(searchVal) || m.with.toLowerCase().includes(searchVal);
+                const matchesType = !typeVal || m.type.toLowerCase() === typeVal;
+                const matchesPriority = !priorityVal || m.priority.toLowerCase() === priorityVal;
+                
+                let matchesDate = true;
+                if (dateVal === 'may') {
+                    matchesDate = m.dateTime.toLowerCase().includes('may');
+                } else if (dateVal === 'upcoming') {
+                    matchesDate = m.status === 'Upcoming';
+                }
+
+                return matchesStatus && matchesSearch && matchesType && matchesPriority && matchesDate;
+            });
+
+            const tbody = document.getElementById('meetingsTableBody');
+            tbody.innerHTML = '';
+
+            if (filtered.length === 0) {
+                tbody.innerHTML = `<tr><td colspan="8" style="text-align:center; padding:2rem; color:var(--text-muted); font-weight: 550;">No meetings found matching current filters.</td></tr>`;
+                document.querySelector('.footer-info').innerText = `Showing 0 to 0 of ${meetingsList.length} meetings`;
+                return;
+            }
+
+            filtered.forEach(m => {
+                const tr = document.createElement('tr');
+                tr.className = 'clickable-row';
+                tr.onclick = () => openMeetingDetailsModal(m.id);
+
+                // Determine avatar/initials for owner
+                let ownerHtml = '';
+                if (m.owner === 'Priya Sharma') {
+                    ownerHtml = `
+                        <div class="owner-avatar-wrapper">
+                            <img src="priya_sharma_avatar.png" class="owner-small-pic" alt="Priya">
+                            <span>Priya Sharma</span>
+                        </div>
+                    `;
+                } else {
+                    ownerHtml = `
+                        <div class="owner-avatar-wrapper">
+                            <div class="owner-small-pic" style="background:#eff1fe; color:var(--primary); display:flex; align-items:center; justify-content:center; font-weight:700; font-size:0.7rem;">AV</div>
+                            <span>${m.owner}</span>
+                        </div>
+                    `;
+                }
+
+                const statusClass = m.status === 'Completed' ? 'status-badge-meeting completed' : (m.status === 'Cancelled' ? 'status-badge-meeting cancelled' : 'status-badge-meeting');
+
+                tr.innerHTML = `
+                    <td style="color:var(--primary); font-weight:750;">${m.title}</td>
+                    <td>${m.with}</td>
+                    <td>${m.type}</td>
+                    <td>${m.dateTime}</td>
+                    <td><span class="priority-badge ${m.priority.toLowerCase()}">${m.priority}</span></td>
+                    <td>${ownerHtml}</td>
+                    <td><span class="${statusClass}">${m.status}</span></td>
+                    <td>
+                        <button class="action-cell-btn" onclick="event.stopPropagation(); openMeetingDetailsModal('${m.id}')">
+                            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><circle cx="12" cy="12" r="1"/><circle cx="12" cy="5" r="1"/><circle cx="12" cy="19" r="1"/></svg>
+                        </button>
+                    </td>
+                `;
+                tbody.appendChild(tr);
+            });
+
+            document.querySelector('.footer-info').innerText = `Showing 1 to ${filtered.length} of ${meetingsList.length} meetings`;
+        }
+
+        function resetFilters() {
+            document.getElementById('searchFilter').value = '';
+            document.getElementById('dateFilter').value = '';
+            document.getElementById('typeFilter').value = '';
+            document.getElementById('priorityFilter').value = '';
+            renderMeetings();
+        }
+
+        // Add event listeners
+        document.getElementById('searchFilter').addEventListener('input', renderMeetings);
+        document.getElementById('dateFilter').addEventListener('change', renderMeetings);
+        document.getElementById('typeFilter').addEventListener('change', renderMeetings);
+        document.getElementById('priorityFilter').addEventListener('change', renderMeetings);
+
+        // Bind status tabs click listeners
+        document.querySelectorAll('#statusTabs .tab-item').forEach(tab => {
+            tab.addEventListener('click', (e) => {
+                document.querySelectorAll('#statusTabs .tab-item').forEach(t => t.classList.remove('active'));
+                tab.classList.add('active');
+                activeStatusTab = tab.getAttribute('data-status');
+                renderMeetings();
+            });
+        });
+
+        // Initial render
+        window.onload = () => {
+            renderMeetings();
+        };
+    </script>
+</body>
+</html>

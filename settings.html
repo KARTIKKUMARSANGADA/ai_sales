@@ -1,0 +1,1349 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SalesAI — Settings</title>
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --primary: #5b3af2;
+            --primary-hover: #4726d9;
+            --primary-light: #eff1fe;
+            --text-dark: #0f172a;
+            --text-muted: #64748b;
+            --bg-body: #f8fafc;
+            --bg-card: #ffffff;
+            --border-color: #e2e8f0;
+            --font-family: 'Plus Jakarta Sans', sans-serif;
+            --shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
+            --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.05), 0 2px 4px -1px rgba(0, 0, 0, 0.03);
+            --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.04), 0 4px 6px -2px rgba(0, 0, 0, 0.02);
+            
+            --success: #10b981;
+            --success-light: #ecfdf5;
+            --danger: #ef4444;
+            --danger-light: #fef2f2;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: var(--font-family);
+            background-color: var(--bg-body);
+            color: var(--text-dark);
+            min-height: 100vh;
+            display: flex;
+            overflow-x: hidden;
+        }
+
+        /* Sidebar Container */
+        .sidebar {
+            width: 260px;
+            background: #ffffff;
+            border-right: 1px solid var(--border-color);
+            padding: 2rem 1.5rem;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            position: fixed;
+            top: 0;
+            bottom: 0;
+            left: 0;
+            z-index: 100;
+        }
+
+        .logo-container {
+            display: flex;
+            align-items: center;
+            gap: 0.6rem;
+            text-decoration: none;
+            color: var(--text-dark);
+            font-weight: 700;
+            font-size: 1.35rem;
+            margin-bottom: 2rem;
+        }
+
+        .logo-icon {
+            color: var(--primary);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .logo-text span {
+            color: var(--primary);
+        }
+
+        /* Sidebar Navigation */
+        .nav-links {
+            display: flex;
+            flex-direction: column;
+            gap: 0.35rem;
+            list-style: none;
+            flex: 1;
+        }
+
+        .nav-item a {
+            display: flex;
+            align-items: center;
+            gap: 0.85rem;
+            padding: 0.75rem 1rem;
+            color: var(--text-muted);
+            text-decoration: none;
+            font-weight: 600;
+            font-size: 0.95rem;
+            border-radius: 8px;
+            transition: all 0.2s ease;
+        }
+
+        .nav-item a:hover {
+            color: var(--primary);
+            background-color: #f8fafc;
+        }
+
+        .nav-item.active a {
+            color: var(--primary);
+            background-color: var(--primary-light);
+        }
+
+        .nav-icon {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            width: 20px;
+            height: 20px;
+        }
+
+        .inbox-badge {
+            margin-left: auto;
+            background-color: var(--primary);
+            color: #ffffff;
+            font-size: 0.75rem;
+            font-weight: 700;
+            padding: 0.15rem 0.5rem;
+            border-radius: 999px;
+        }
+
+        /* Sidebar User Profile */
+        .sidebar-user {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            padding-top: 1.5rem;
+            border-top: 1px solid var(--border-color);
+            margin-top: 1.5rem;
+        }
+
+        .user-avatar {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            object-fit: cover;
+            border: 1px solid var(--border-color);
+        }
+
+        .user-details {
+            flex: 1;
+            min-width: 0;
+        }
+
+        .user-name {
+            font-size: 0.88rem;
+            font-weight: 700;
+            color: var(--text-dark);
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+        .user-role {
+            font-size: 0.75rem;
+            color: var(--text-muted);
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+        .user-dropdown {
+            color: var(--text-muted);
+            cursor: pointer;
+        }
+
+        /* Main Workspace Content */
+        .main-workspace {
+            margin-left: 260px;
+            flex: 1;
+            padding: 2.2rem 2.5rem;
+            min-width: 0;
+            display: flex;
+            flex-direction: column;
+            gap: 1.5rem;
+        }
+
+        /* Top Header Breadcrumb */
+        .workspace-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .header-title-section {
+            display: flex;
+            flex-direction: column;
+            gap: 0.35rem;
+        }
+
+        .workspace-breadcrumbs {
+            font-size: 0.82rem;
+            color: var(--text-muted);
+            font-weight: 500;
+            display: flex;
+            align-items: center;
+            gap: 0.4rem;
+        }
+
+        .workspace-breadcrumbs span {
+            cursor: pointer;
+        }
+
+        .workspace-breadcrumbs span:hover {
+            color: var(--primary);
+        }
+
+        .workspace-breadcrumbs span.active {
+            color: var(--text-dark);
+            font-weight: 600;
+            cursor: default;
+        }
+
+        .workspace-breadcrumbs span.active:hover {
+            color: var(--text-dark);
+        }
+
+        .header-actions {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+        }
+
+        .search-wrapper {
+            position: relative;
+            width: 260px;
+        }
+
+        .search-input {
+            width: 100%;
+            background-color: #ffffff;
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            padding: 0.6rem 0.8rem 0.6rem 2.3rem;
+            font-family: var(--font-family);
+            font-size: 0.88rem;
+            font-weight: 500;
+            outline: none;
+            transition: all 0.2s ease;
+        }
+
+        .search-input:focus {
+            border-color: var(--primary);
+            box-shadow: 0 0 0 3px rgba(91, 58, 242, 0.1);
+        }
+
+        .search-icon {
+            position: absolute;
+            left: 0.8rem;
+            top: 50%;
+            transform: translateY(-50%);
+            color: var(--text-muted);
+            display: flex;
+            align-items: center;
+        }
+
+        .icon-btn {
+            background-color: #ffffff;
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            width: 38px;
+            height: 38px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--text-dark);
+            cursor: pointer;
+            position: relative;
+            transition: all 0.2s ease;
+        }
+
+        .icon-btn:hover {
+            border-color: var(--primary);
+            color: var(--primary);
+        }
+
+        .btn-badge {
+            position: absolute;
+            top: -4px;
+            right: -4px;
+            background-color: var(--primary);
+            color: #ffffff;
+            font-size: 0.7rem;
+            font-weight: 700;
+            width: 16px;
+            height: 16px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .btn-new-lead {
+            background-color: var(--primary);
+            color: #ffffff;
+            border: none;
+            border-radius: 8px;
+            padding: 0.6rem 1.1rem;
+            font-family: var(--font-family);
+            font-size: 0.88rem;
+            font-weight: 600;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 0.4rem;
+            transition: background-color 0.2s ease;
+        }
+
+        .btn-new-lead:hover {
+            background-color: var(--primary-hover);
+        }
+
+        /* Title Area */
+        .settings-title-block {
+            display: flex;
+            flex-direction: column;
+            gap: 0.3rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .settings-title {
+            font-size: 1.55rem;
+            font-weight: 700;
+            color: var(--text-dark);
+        }
+
+        .settings-subtitle {
+            font-size: 0.88rem;
+            color: var(--text-muted);
+            font-weight: 550;
+        }
+
+        /* Sub tabs row */
+        .tabs-container {
+            border-bottom: 1px solid var(--border-color);
+            display: flex;
+            gap: 1.8rem;
+            margin-bottom: 1rem;
+        }
+
+        .tab-item {
+            padding-bottom: 0.8rem;
+            font-size: 0.9rem;
+            font-weight: 700;
+            color: var(--text-muted);
+            text-decoration: none;
+            position: relative;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 0.45rem;
+            transition: color 0.2s;
+        }
+
+        .tab-item:hover {
+            color: var(--primary);
+        }
+
+        .tab-item.active {
+            color: var(--primary);
+        }
+
+        .tab-item.active::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            height: 2px;
+            background-color: var(--primary);
+        }
+
+        /* Split Workspace layout */
+        .workspace-grid {
+            display: grid;
+            grid-template-columns: 2.1fr 1fr;
+            gap: 2rem;
+            align-items: start;
+        }
+
+        @media (max-width: 1024px) {
+            .workspace-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        /* Left Column components */
+        .left-column {
+            display: flex;
+            flex-direction: column;
+            gap: 1.5rem;
+        }
+
+        .card {
+            background: #ffffff;
+            border: 1px solid var(--border-color);
+            border-radius: 12px;
+            padding: 1.8rem 2rem;
+            box-shadow: var(--shadow-sm);
+        }
+
+        .card-title {
+            font-size: 1.05rem;
+            font-weight: 750;
+            color: var(--text-dark);
+            margin-bottom: 1.5rem;
+        }
+
+        /* Profile details layout */
+        .profile-form-layout {
+            display: flex;
+            gap: 2rem;
+        }
+
+        @media (max-width: 600px) {
+            .profile-form-layout {
+                flex-direction: column;
+                align-items: center;
+            }
+        }
+
+        .avatar-uploader-wrapper {
+            position: relative;
+            width: 100px;
+            height: 100px;
+            flex-shrink: 0;
+        }
+
+        .avatar-uploader-pic {
+            width: 100%;
+            height: 100%;
+            border-radius: 50%;
+            object-fit: cover;
+            border: 3px solid var(--primary-light);
+        }
+
+        .avatar-camera-btn {
+            position: absolute;
+            bottom: 0;
+            right: 0;
+            background-color: var(--primary);
+            color: #ffffff;
+            border: 2px solid #ffffff;
+            width: 28px;
+            height: 28px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            box-shadow: var(--shadow-sm);
+        }
+
+        .avatar-camera-btn:hover {
+            background-color: var(--primary-hover);
+        }
+
+        .profile-inputs-grid {
+            flex: 1;
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 1.25rem;
+        }
+
+        @media (max-width: 480px) {
+            .profile-inputs-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        .form-group {
+            display: flex;
+            flex-direction: column;
+            gap: 0.4rem;
+        }
+
+        .form-label {
+            font-size: 0.8rem;
+            font-weight: 750;
+            color: var(--text-muted);
+        }
+
+        .input-wrapper {
+            position: relative;
+            display: flex;
+            align-items: center;
+        }
+
+        .form-input {
+            width: 100%;
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            padding: 0.65rem 0.9rem;
+            font-family: var(--font-family);
+            font-size: 0.88rem;
+            font-weight: 600;
+            outline: none;
+            transition: all 0.2s ease;
+        }
+
+        .form-input:focus {
+            border-color: var(--primary);
+            box-shadow: 0 0 0 3px rgba(91, 58, 242, 0.08);
+        }
+
+        .input-badge-verified {
+            position: absolute;
+            right: 0.75rem;
+            background-color: var(--success-light);
+            color: var(--success);
+            font-size: 0.7rem;
+            font-weight: 750;
+            padding: 0.15rem 0.45rem;
+            border-radius: 4px;
+            pointer-events: none;
+        }
+
+        .phone-input-group {
+            display: flex;
+            gap: 0.5rem;
+            width: 100%;
+        }
+
+        .flag-dropdown {
+            border: 1px solid var(--border-color);
+            background-color: #ffffff;
+            border-radius: 8px;
+            padding: 0.65rem 0.6rem;
+            font-size: 0.85rem;
+            font-family: var(--font-family);
+            font-weight: 600;
+            outline: none;
+            display: flex;
+            align-items: center;
+            gap: 0.35rem;
+            cursor: pointer;
+        }
+
+        .flag-dropdown:hover {
+            border-color: var(--primary);
+        }
+
+        /* Bio area */
+        .bio-textarea-wrapper {
+            position: relative;
+            width: 100%;
+        }
+
+        .bio-textarea {
+            width: 100%;
+            min-height: 85px;
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            padding: 0.8rem 1rem;
+            font-family: var(--font-family);
+            font-size: 0.88rem;
+            font-weight: 600;
+            line-height: 1.5;
+            outline: none;
+            resize: vertical;
+            transition: all 0.2s ease;
+        }
+
+        .bio-textarea:focus {
+            border-color: var(--primary);
+            box-shadow: 0 0 0 3px rgba(91, 58, 242, 0.08);
+        }
+
+        .char-counter {
+            position: absolute;
+            bottom: -1.25rem;
+            right: 0;
+            font-size: 0.72rem;
+            color: var(--text-muted);
+            font-weight: 550;
+        }
+
+        .select-input {
+            width: 100%;
+            border: 1px solid var(--border-color);
+            background-color: #ffffff;
+            border-radius: 8px;
+            padding: 0.65rem 0.9rem;
+            font-family: var(--font-family);
+            font-size: 0.88rem;
+            font-weight: 600;
+            outline: none;
+            cursor: pointer;
+            appearance: none;
+        }
+
+        .select-input:focus {
+            border-color: var(--primary);
+        }
+
+        .select-wrapper {
+            position: relative;
+        }
+
+        .select-arrow {
+            position: absolute;
+            right: 0.9rem;
+            top: 50%;
+            transform: translateY(-50%);
+            color: var(--text-muted);
+            pointer-events: none;
+            display: flex;
+            align-items: center;
+        }
+
+        .form-footer-actions {
+            display: flex;
+            gap: 0.75rem;
+            margin-top: 1.5rem;
+        }
+
+        .btn-save {
+            background-color: var(--primary);
+            color: #ffffff;
+            border: none;
+            border-radius: 8px;
+            padding: 0.65rem 1.4rem;
+            font-family: var(--font-family);
+            font-size: 0.88rem;
+            font-weight: 700;
+            cursor: pointer;
+            transition: background-color 0.2s;
+        }
+
+        .btn-save:hover {
+            background-color: var(--primary-hover);
+        }
+
+        .btn-cancel {
+            background-color: #ffffff;
+            border: 1.5px solid var(--border-color);
+            border-radius: 8px;
+            padding: 0.65rem 1.4rem;
+            color: var(--text-dark);
+            font-family: var(--font-family);
+            font-size: 0.88rem;
+            font-weight: 700;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .btn-cancel:hover {
+            border-color: #cbd5e1;
+            background-color: #f8fafc;
+        }
+
+        /* Password and security widget cards */
+        .flex-card-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: 1.5rem;
+        }
+
+        .card-left-desc {
+            display: flex;
+            flex-direction: column;
+            gap: 0.25rem;
+        }
+
+        .card-bold-label {
+            font-size: 0.92rem;
+            font-weight: 750;
+            color: var(--text-dark);
+        }
+
+        .card-subtext {
+            font-size: 0.8rem;
+            color: var(--text-muted);
+            font-weight: 550;
+        }
+
+        .badge-enabled {
+            background-color: var(--success-light);
+            color: var(--success);
+            font-size: 0.72rem;
+            font-weight: 750;
+            padding: 0.15rem 0.5rem;
+            border-radius: 4px;
+            margin-left: 0.5rem;
+        }
+
+        .btn-card-outline {
+            background-color: #ffffff;
+            border: 1.5px solid var(--border-color);
+            border-radius: 8px;
+            padding: 0.6rem 1.1rem;
+            color: var(--text-dark);
+            font-family: var(--font-family);
+            font-size: 0.84rem;
+            font-weight: 700;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 0.4rem;
+            transition: all 0.2s ease;
+            flex-shrink: 0;
+        }
+
+        .btn-card-outline:hover {
+            border-color: var(--primary);
+            color: var(--primary);
+        }
+
+        /* Right Column widgets */
+        .right-column {
+            display: flex;
+            flex-direction: column;
+            gap: 1.5rem;
+        }
+
+        .widget-card {
+            background: #ffffff;
+            border: 1px solid var(--border-color);
+            border-radius: 12px;
+            padding: 1.5rem;
+            box-shadow: var(--shadow-sm);
+        }
+
+        .widget-title {
+            font-size: 0.9rem;
+            font-weight: 750;
+            color: var(--text-dark);
+            margin-bottom: 1.1rem;
+        }
+
+        /* Account Summary widget */
+        .summary-list {
+            display: flex;
+            flex-direction: column;
+            gap: 0.85rem;
+            list-style: none;
+            margin-bottom: 1.25rem;
+        }
+
+        .summary-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            font-size: 0.84rem;
+            font-weight: 600;
+        }
+
+        .summary-label {
+            color: var(--text-muted);
+        }
+
+        .summary-val {
+            color: var(--text-dark);
+            font-weight: 700;
+        }
+
+        .btn-manage-plan {
+            width: 100%;
+            border: 1.5px solid var(--primary);
+            background-color: #ffffff;
+            color: var(--primary);
+            padding: 0.65rem 1rem;
+            border-radius: 8px;
+            font-family: var(--font-family);
+            font-size: 0.85rem;
+            font-weight: 750;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.4rem;
+            transition: all 0.2s;
+        }
+
+        .btn-manage-plan:hover {
+            background-color: var(--primary-light);
+        }
+
+        /* Recent Sessions widget */
+        .sessions-list {
+            display: flex;
+            flex-direction: column;
+            gap: 1rem;
+            list-style: none;
+            margin-bottom: 0.85rem;
+        }
+
+        .session-item {
+            display: flex;
+            gap: 0.75rem;
+            align-items: flex-start;
+        }
+
+        .session-icon-box {
+            width: 32px;
+            height: 32px;
+            border-radius: 6px;
+            background-color: #f1f5f9;
+            color: var(--text-muted);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-shrink: 0;
+        }
+
+        .session-details {
+            display: flex;
+            flex-direction: column;
+            gap: 0.2rem;
+        }
+
+        .session-device-row {
+            display: flex;
+            align-items: center;
+            gap: 0.4rem;
+            font-size: 0.84rem;
+            font-weight: 700;
+            color: var(--text-dark);
+        }
+
+        .badge-this-device {
+            background-color: var(--primary-light);
+            color: var(--primary);
+            font-size: 0.68rem;
+            font-weight: 750;
+            padding: 0.15rem 0.4rem;
+            border-radius: 4px;
+        }
+
+        .session-meta {
+            font-size: 0.74rem;
+            color: var(--text-muted);
+            font-weight: 600;
+        }
+
+        .session-link-row {
+            text-align: center;
+        }
+
+        .sessions-link {
+            font-size: 0.84rem;
+            color: var(--primary);
+            text-decoration: none;
+            font-weight: 700;
+        }
+
+        .sessions-link:hover {
+            color: var(--primary-hover);
+        }
+
+        /* Danger Zone widget */
+        .danger-card {
+            border: 1.5px dashed var(--danger);
+            background-color: var(--danger-light);
+            border-radius: 12px;
+            padding: 1.25rem 1.5rem;
+        }
+
+        .danger-title {
+            font-size: 0.9rem;
+            font-weight: 750;
+            color: var(--danger);
+            margin-bottom: 0.85rem;
+        }
+
+        .danger-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            cursor: pointer;
+        }
+
+        .danger-desc-block {
+            display: flex;
+            flex-direction: column;
+            gap: 0.2rem;
+        }
+
+        .danger-label {
+            font-size: 0.84rem;
+            font-weight: 750;
+            color: var(--danger);
+        }
+
+        .danger-subtext {
+            font-size: 0.74rem;
+            color: var(--text-muted);
+            font-weight: 550;
+        }
+
+        .danger-icon {
+            color: var(--danger);
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Left Sidebar Panel -->
+    <div class="sidebar">
+        <div>
+            <!-- Logo Section -->
+            <a href="dashboard.html" class="logo-container">
+                <span class="logo-icon">
+                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"/>
+                        <polyline points="3.27 6.96 12 12.01 20.73 6.96"/>
+                        <line x1="12" y1="22.08" x2="12" y2="12"/>
+                    </svg>
+                </span>
+                <span class="logo-text">Sales<span>AI</span></span>
+            </a>
+
+            <!-- Navigation Links -->
+            <ul class="nav-links">
+                <li class="nav-item">
+                    <a href="dashboard.html">
+                        <span class="nav-icon">
+                            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+                                <rect x="3" y="3" width="7" height="9"/>
+                                <rect x="14" y="3" width="7" height="5"/>
+                                <rect x="14" y="12" width="7" height="9"/>
+                                <rect x="3" y="16" width="7" height="5"/>
+                            </svg>
+                        </span>
+                        <span class="nav-text">Dashboard</span>
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a href="leads.html">
+                        <span class="nav-icon">
+                            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+                                <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/>
+                                <circle cx="9" cy="7" r="4"/>
+                                <path d="M23 21v-2a4 4 0 0 0-3-3.87"/>
+                                <path d="M16 3.13a4 4 0 0 1 0 7.75"/>
+                            </svg>
+                        </span>
+                        <span class="nav-text">Leads</span>
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a href="companies.html">
+                        <span class="nav-icon">
+                            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+                                <path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"/>
+                            </svg>
+                        </span>
+                        <span class="nav-text">Companies</span>
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a href="campaigns.html">
+                        <span class="nav-icon">
+                            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+                                <polygon points="12 2 2 7 12 12 22 7 12 2"/>
+                                <polyline points="2 17 12 22 22 17"/>
+                                <polyline points="2 12 12 17 22 12"/>
+                            </svg>
+                        </span>
+                        <span class="nav-text">Campaigns</span>
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a href="inbox.html">
+                        <span class="nav-icon">
+                            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+                                <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/>
+                            </svg>
+                        </span>
+                        <span class="nav-text">Inbox</span>
+                        <span class="inbox-badge">12</span>
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a href="meetings.html">
+                        <span class="nav-icon">
+                            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+                                <rect x="3" y="4" width="18" height="18" rx="2" ry="2"/>
+                                <line x1="16" y1="2" x2="16" y2="6"/>
+                                <line x1="8" y1="2" x2="8" y2="6"/>
+                                <line x1="3" y1="10" x2="21" y2="10"/>
+                            </svg>
+                        </span>
+                        <span class="nav-text">Meetings</span>
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a href="tasks.html">
+                        <span class="nav-icon">
+                            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+                                <polyline points="9 11 12 14 22 4"/>
+                                <path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"/>
+                            </svg>
+                        </span>
+                        <span class="nav-text">Tasks</span>
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a href="deals.html">
+                        <span class="nav-icon">
+                            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+                                <line x1="12" y1="1" x2="12" y2="23"/>
+                                <path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/>
+                            </svg>
+                        </span>
+                        <span class="nav-text">Deals</span>
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a href="reports.html">
+                        <span class="nav-icon">
+                            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+                                <line x1="18" y1="20" x2="18" y2="10"/>
+                                <line x1="12" y1="20" x2="12" y2="4"/>
+                                <line x1="6" y1="20" x2="6" y2="14"/>
+                            </svg>
+                        </span>
+                        <span class="nav-text">Reports</span>
+                    </a>
+                </li>
+                <li class="nav-item active">
+                    <a href="settings.html">
+                        <span class="nav-icon">
+                            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+                                <circle cx="12" cy="12" r="3"/>
+                                <path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 1 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 1 1-2.83-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 1 1 2.83-2.83l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1-2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 1 1 2.83 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"/>
+                            </svg>
+                        </span>
+                        <span class="nav-text">Settings</span>
+                    </a>
+                </li>
+            </ul>
+        </div>
+
+        <!-- Sidebar User Profile -->
+        <div class="sidebar-user">
+            <img src="priya_sharma_avatar.png" alt="Priya Sharma" class="user-avatar">
+            <div class="user-details">
+                <div class="user-name">Priya Sharma</div>
+                <div class="user-role">Sales Representative</div>
+            </div>
+            <span class="user-dropdown">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="6 9 12 15 18 9"/></svg>
+            </span>
+        </div>
+    </div>
+
+    <!-- Main Workspace Content Panel -->
+    <div class="main-workspace">
+        
+        <!-- Breadcrumbs Header -->
+        <div class="workspace-header">
+            <div class="header-title-section">
+                <div class="workspace-breadcrumbs">
+                    <span onclick="window.location.href='dashboard.html'">Dashboard</span> &gt; 
+                    <span onclick="alert('Settings section overview.')">Settings</span> &gt; 
+                    <span class="active">My Account</span>
+                </div>
+            </div>
+            <div class="header-actions">
+                <div class="search-wrapper">
+                    <span class="search-icon">
+                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+                    </span>
+                    <input type="text" placeholder="Search leads, companies..." class="search-input">
+                </div>
+                <button class="icon-btn" onclick="alert('No new alerts.')">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/>
+                        <path d="M13.73 21a2 2 0 0 1-3.46 0"/>
+                    </svg>
+                    <span class="btn-badge">6</span>
+                </button>
+                <button class="icon-btn" onclick="alert('View Calendar dashboard.')">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+                        <rect x="3" y="4" width="18" height="18" rx="2" ry="2"/>
+                        <line x1="16" y1="2" x2="16" y2="6"/>
+                        <line x1="8" y1="2" x2="8" y2="6"/>
+                        <line x1="3" y1="10" x2="21" y2="10"/>
+                    </svg>
+                </button>
+                
+                <button class="btn-new-lead" onclick="window.location.href='add-lead.html'">
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+                    New Lead
+                </button>
+            </div>
+        </div>
+
+        <!-- Title Area -->
+        <div class="settings-title-block">
+            <h2 class="settings-title">My Account</h2>
+            <p class="settings-subtitle">Manage your profile, preferences and account settings.</p>
+        </div>
+
+        <!-- Tab Row -->
+        <div class="tabs-container">
+            <span class="tab-item active">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+                Profile
+            </span>
+            <span class="tab-item" onclick="alert('Preferences settings tab.')">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 1 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 1 1-2.83-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 1 1 2.83-2.83l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1-2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 1 1 2.83 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>
+                Preferences
+            </span>
+            <span class="tab-item" onclick="alert('Notification settings tab.')">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 0 1-3.46 0"/></svg>
+                Notifications
+            </span>
+            <span class="tab-item" onclick="alert('Security settings tab.')">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
+                Security
+            </span>
+            <span class="tab-item" onclick="alert('API & Webhooks settings tab.')">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="16 18 22 12 16 6"/><polyline points="8 6 2 12 8 18"/></svg>
+                API & Webhooks
+            </span>
+        </div>
+
+        <!-- 2-Column Split Details Grid -->
+        <div class="workspace-grid">
+            
+            <!-- Left Column Forms -->
+            <div class="left-column">
+                
+                <!-- Profile Information Card -->
+                <div class="card">
+                    <h3 class="card-title">Profile Information</h3>
+                    
+                    <div class="profile-form-layout">
+                        <!-- Left avatar slot -->
+                        <div class="avatar-uploader-wrapper">
+                            <img src="priya_sharma_avatar.png" alt="Priya Sharma" class="avatar-uploader-pic">
+                            <span class="avatar-camera-btn" onclick="alert('Upload new avatar image dialog.')">
+                                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"/><circle cx="12" cy="13" r="4"/></svg>
+                            </span>
+                        </div>
+
+                        <!-- Right form inputs -->
+                        <div class="profile-inputs-grid">
+                            <div class="form-group">
+                                <label class="form-label">Full Name</label>
+                                <input type="text" class="form-input" value="Priya Sharma">
+                            </div>
+                            <div class="form-group">
+                                <label class="form-label">Job Title</label>
+                                <input type="text" class="form-input" value="Sales Representative">
+                            </div>
+                            <div class="form-group">
+                                <label class="form-label">Email</label>
+                                <div class="input-wrapper">
+                                    <input type="email" class="form-input" value="priya.sharma@salesai.com" style="padding-right: 5rem;">
+                                    <span class="input-badge-verified">Verified</span>
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label class="form-label">Phone</label>
+                                <div class="phone-input-group">
+                                    <div class="flag-dropdown" onclick="alert('Choose country code.')">
+                                        🇮🇳 +91
+                                    </div>
+                                    <input type="text" class="form-input" value="98765 43210" style="flex:1;">
+                                </div>
+                            </div>
+
+                            <!-- Bio (colspan 2) -->
+                            <div class="form-group" style="grid-column: span 2;">
+                                <label class="form-label">Bio</label>
+                                <div class="bio-textarea-wrapper">
+                                    <textarea class="bio-textarea">Passionate about helping businesses grow with AI-powered sales engagement. Focused on building meaningful relationships and driving revenue.</textarea>
+                                    <span class="char-counter">128 / 250</span>
+                                </div>
+                            </div>
+
+                            <!-- Time Zone -->
+                            <div class="form-group">
+                                <label class="form-label">Time Zone</label>
+                                <div class="select-wrapper">
+                                    <select class="select-input">
+                                        <option value="kolkata" selected>(GMT+05:30) Asia/Kolkata</option>
+                                        <option value="utc">(GMT+00:00) UTC</option>
+                                        <option value="est">(GMT-05:00) New York</option>
+                                    </select>
+                                    <span class="select-arrow">
+                                        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><polyline points="6 9 12 15 18 9"/></svg>
+                                    </span>
+                                </div>
+                            </div>
+
+                            <!-- Language -->
+                            <div class="form-group">
+                                <label class="form-label">Language</label>
+                                <div class="select-wrapper">
+                                    <select class="select-input">
+                                        <option value="en" selected>English</option>
+                                        <option value="es">Español</option>
+                                        <option value="fr">Français</option>
+                                    </select>
+                                    <span class="select-arrow">
+                                        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><polyline points="6 9 12 15 18 9"/></svg>
+                                    </span>
+                                </div>
+                            </div>
+                            
+                            <!-- Actions Buttons -->
+                            <div class="form-footer-actions" style="grid-column: span 2;">
+                                <button class="btn-save" onclick="alert('Account profile modifications saved successfully!')">Save Changes</button>
+                                <button class="btn-cancel" onclick="window.location.href='dashboard.html'">Cancel</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Password Card -->
+                <div class="card flex-card-row">
+                    <div class="card-left-desc">
+                        <span class="card-bold-label">Password</span>
+                        <span class="card-subtext">Update your account password</span>
+                    </div>
+                    <button class="btn-card-outline" onclick="alert('Update password modal.')">
+                        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
+                        Change Password
+                    </button>
+                </div>
+
+                <!-- Two-Factor Authentication Card -->
+                <div class="card flex-card-row">
+                    <div class="card-left-desc">
+                        <span class="card-bold-label">
+                            Two-Factor Authentication
+                            <span class="badge-enabled">Enabled</span>
+                        </span>
+                        <span class="card-subtext">
+                            Using Google Authenticator
+                        </span>
+                    </div>
+                    <button class="btn-card-outline" onclick="alert('Managing 2FA details.')">Manage 2FA</button>
+                </div>
+            </div>
+
+            <!-- Right Column Details -->
+            <div class="right-column">
+                
+                <!-- Account Summary Widget -->
+                <div class="widget-card">
+                    <h4 class="widget-title">Account Summary</h4>
+                    <ul class="summary-list">
+                        <li class="summary-item">
+                            <span class="summary-label">Plan</span>
+                            <span class="summary-val">Professional</span>
+                        </li>
+                        <li class="summary-item">
+                            <span class="summary-label">Users</span>
+                            <span class="summary-val">5 / 10</span>
+                        </li>
+                        <li class="summary-item">
+                            <span class="summary-label">Leads</span>
+                            <span class="summary-val">1,248</span>
+                        </li>
+                        <li class="summary-item">
+                            <span class="summary-label">Emails Sent (This Month)</span>
+                            <span class="summary-val">3,256 / 10,000</span>
+                        </li>
+                        <li class="summary-item">
+                            <span class="summary-label">Storage Used</span>
+                            <span class="summary-val">2.4 GB / 10 GB</span>
+                        </li>
+                    </ul>
+                    <button class="btn-manage-plan" onclick="alert('Upgrading plan billing details.')">
+                        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" style="color:var(--primary);"><path d="M2 4l3 12h14l3-12-6 7-4-7-4 7-6-7z"/></svg>
+                        Manage Plan
+                    </button>
+                </div>
+
+                <!-- Recent Sessions Widget -->
+                <div class="widget-card">
+                    <h4 class="widget-title">Recent Sessions</h4>
+                    <ul class="sessions-list">
+                        <!-- Session 1 -->
+                        <li class="session-item">
+                            <span class="session-icon-box">
+                                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><rect x="2" y="3" width="20" height="14" rx="2" ry="2"/><line x1="8" y1="21" x2="16" y2="21"/><line x1="12" y1="17" x2="12" y2="21"/></svg>
+                            </span>
+                            <div class="session-details">
+                                <span class="session-device-row">
+                                    Windows • Chrome
+                                    <span class="badge-this-device">This Device</span>
+                                </span>
+                                <span class="session-meta">Mumbai, India - Currently Active</span>
+                            </div>
+                        </li>
+                        <!-- Session 2 -->
+                        <li class="session-item">
+                            <span class="session-icon-box">
+                                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><rect x="5" y="2" width="14" height="20" rx="2" ry="2"/><line x1="12" y1="18" x2="12" y2="18"/></svg>
+                            </span>
+                            <div class="session-details">
+                                <span class="session-device-row">iPhone • Safari</span>
+                                <span class="session-meta">Mumbai, India - Yesterday, 10:32 AM</span>
+                            </div>
+                        </li>
+                        <!-- Session 3 -->
+                        <li class="session-item">
+                            <span class="session-icon-box">
+                                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><rect x="2" y="3" width="20" height="14" rx="2" ry="2"/><line x1="8" y1="21" x2="16" y2="21"/><line x1="12" y1="17" x2="12" y2="21"/></svg>
+                            </span>
+                            <div class="session-details">
+                                <span class="session-device-row">Mac • Chrome</span>
+                                <span class="session-meta">Bengaluru, India - 14 May 2024, 04:15 PM</span>
+                            </div>
+                        </li>
+                    </ul>
+                    <div class="session-link-row">
+                        <a href="#" class="sessions-link" onclick="alert('Viewing all logged session history.')">View All Sessions</a>
+                    </div>
+                </div>
+
+                <!-- Danger Zone Widget -->
+                <div class="danger-card">
+                    <h4 class="danger-title">Danger Zone</h4>
+                    <div class="danger-row" onclick="alert('Delete account sequence started. Action is irreversible!')">
+                        <div class="danger-desc-block">
+                            <span class="danger-label">Delete Account</span>
+                            <span class="danger-subtext">Permanently delete your account and all data.</span>
+                        </div>
+                        <span class="danger-icon">
+                            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="9 18 15 12 9 6"/></svg>
+                        </span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+</html>

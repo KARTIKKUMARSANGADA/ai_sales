@@ -1,0 +1,1849 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SalesAI — Dashboard</title>
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --primary: #5b3af2;
+            --primary-hover: #4726d9;
+            --primary-light: #eff1fe;
+            --text-dark: #0f172a;
+            --text-muted: #64748b;
+            --bg-body: #f8fafc;
+            --bg-card: #ffffff;
+            --border-color: #e2e8f0;
+            --font-family: 'Plus Jakarta Sans', sans-serif;
+            --shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
+            --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.05), 0 2px 4px -1px rgba(0, 0, 0, 0.03);
+            --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.04), 0 4px 6px -2px rgba(0, 0, 0, 0.02);
+            
+            /* Status Colors */
+            --status-enriched-bg: #ecfdf5;
+            --status-enriched-text: #10b981;
+            --status-new-bg: #eff1fe;
+            --status-new-text: #5b3af2;
+            --status-contacted-bg: #e0f2fe;
+            --status-contacted-text: #0ea5e9;
+            --status-interested-bg: #fff7ed;
+            --status-interested-text: #f97316;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: var(--font-family);
+            background-color: var(--bg-body);
+            color: var(--text-dark);
+            min-height: 100vh;
+            display: flex;
+            overflow-x: hidden;
+        }
+
+        /* Sidebar Container */
+        .sidebar {
+            width: 260px;
+            background: #ffffff;
+            border-right: 1px solid var(--border-color);
+            padding: 2rem 1.5rem;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            position: fixed;
+            top: 0;
+            bottom: 0;
+            left: 0;
+            z-index: 100;
+        }
+
+        .logo-container {
+            display: flex;
+            align-items: center;
+            gap: 0.6rem;
+            text-decoration: none;
+            color: var(--text-dark);
+            font-weight: 700;
+            font-size: 1.35rem;
+            margin-bottom: 2rem;
+        }
+
+        .logo-icon {
+            color: var(--primary);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .logo-text span {
+            color: var(--primary);
+        }
+
+        /* Sidebar Navigation */
+        .nav-links {
+            display: flex;
+            flex-direction: column;
+            gap: 0.35rem;
+            list-style: none;
+            flex: 1;
+        }
+
+        .nav-item a {
+            display: flex;
+            align-items: center;
+            gap: 0.85rem;
+            padding: 0.75rem 1rem;
+            color: var(--text-muted);
+            text-decoration: none;
+            font-weight: 600;
+            font-size: 0.95rem;
+            border-radius: 8px;
+            transition: all 0.2s ease;
+        }
+
+        .nav-item a:hover {
+            color: var(--primary);
+            background-color: #f8fafc;
+        }
+
+        .nav-item.active a {
+            color: var(--primary);
+            background-color: var(--primary-light);
+        }
+
+        .nav-icon {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            width: 20px;
+            height: 20px;
+        }
+
+        .inbox-badge {
+            margin-left: auto;
+            background-color: var(--primary);
+            color: #ffffff;
+            font-size: 0.75rem;
+            font-weight: 700;
+            padding: 0.15rem 0.5rem;
+            border-radius: 999px;
+        }
+
+        /* Sidebar Footer / User Profile */
+        .sidebar-user {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            padding-top: 1.5rem;
+            border-top: 1px solid var(--border-color);
+            margin-top: 1.5rem;
+        }
+
+        .user-avatar {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            object-fit: cover;
+            border: 1px solid var(--border-color);
+        }
+
+        .user-details {
+            flex: 1;
+            min-width: 0;
+        }
+
+        .user-name {
+            font-size: 0.88rem;
+            font-weight: 700;
+            color: var(--text-dark);
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+        .user-role {
+            font-size: 0.75rem;
+            color: var(--text-muted);
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+        .user-dropdown {
+            color: var(--text-muted);
+            cursor: pointer;
+        }
+
+        /* Main Content Workspace */
+        .main-workspace {
+            margin-left: 260px;
+            flex: 1;
+            padding: 2.2rem 2.5rem;
+            min-width: 0; /* Prevents overflow issues */
+            display: flex;
+            flex-direction: column;
+            gap: 2rem;
+        }
+
+        /* Top Header */
+        .workspace-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: 2rem;
+        }
+
+        .header-title-section {
+            display: flex;
+            flex-direction: column;
+            gap: 0.35rem;
+        }
+
+        .workspace-title {
+            font-size: 1.75rem;
+            font-weight: 700;
+            color: var(--text-dark);
+            letter-spacing: -0.015em;
+        }
+
+        .workspace-subtitle {
+            font-size: 0.95rem;
+            color: var(--text-muted);
+        }
+
+        .header-actions {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+
+        /* Search Bar */
+        .search-wrapper {
+            position: relative;
+            display: flex;
+            align-items: center;
+            width: 280px;
+        }
+
+        .search-input {
+            width: 100%;
+            padding: 0.65rem 1rem 0.65rem 2.5rem;
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            font-family: var(--font-family);
+            font-size: 0.9rem;
+            outline: none;
+            background: #ffffff;
+            transition: all 0.2s;
+        }
+
+        .search-input:focus {
+            border-color: var(--primary);
+            box-shadow: 0 0 0 3px rgba(91, 58, 242, 0.06);
+        }
+
+        .search-icon {
+            position: absolute;
+            left: 0.85rem;
+            color: var(--text-muted);
+            display: flex;
+            align-items: center;
+            pointer-events: none;
+        }
+
+        /* Action Buttons */
+        .icon-btn {
+            width: 38px;
+            height: 38px;
+            border-radius: 8px;
+            border: 1px solid var(--border-color);
+            background: #ffffff;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--text-dark);
+            cursor: pointer;
+            position: relative;
+            transition: all 0.2s;
+        }
+
+        .icon-btn:hover {
+            background-color: #f8fafc;
+            border-color: #cbd5e1;
+        }
+
+        .btn-badge {
+            position: absolute;
+            top: -4px;
+            right: -4px;
+            background-color: #ef4444;
+            color: #ffffff;
+            font-size: 0.65rem;
+            font-weight: 700;
+            width: 16px;
+            height: 16px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border: 2px solid #ffffff;
+        }
+
+        .btn-new-lead {
+            padding: 0.65rem 1.2rem;
+            background-color: var(--primary);
+            color: #ffffff;
+            border: none;
+            border-radius: 8px;
+            font-family: var(--font-family);
+            font-weight: 600;
+            font-size: 0.9rem;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            transition: all 0.2s;
+            box-shadow: var(--shadow-sm);
+        }
+
+        .btn-new-lead:hover {
+            background-color: var(--primary-hover);
+        }
+
+        .btn-new-lead:active {
+            transform: scale(0.98);
+        }
+
+        /* KPI Cards Grid */
+        .kpi-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 1.5rem;
+        }
+
+        .kpi-card {
+            background: var(--bg-card);
+            border: 1px solid var(--border-color);
+            border-radius: 12px;
+            padding: 1.5rem;
+            display: flex;
+            flex-direction: column;
+            gap: 0.75rem;
+            box-shadow: var(--shadow-sm);
+        }
+
+        .kpi-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .kpi-title {
+            font-size: 0.88rem;
+            font-weight: 600;
+            color: var(--text-muted);
+        }
+
+        .kpi-icon-box {
+            width: 36px;
+            height: 36px;
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        /* Custom color boxes for KPI Icons */
+        .kpi-icon-box.leads { background: rgba(91, 58, 242, 0.08); color: var(--primary); }
+        .kpi-icon-box.emails { background: rgba(59, 130, 246, 0.08); color: #3b82f6; }
+        .kpi-icon-box.meetings { background: rgba(16, 185, 129, 0.08); color: #10b981; }
+        .kpi-icon-box.won { background: rgba(249, 115, 22, 0.08); color: #f97316; }
+
+        .kpi-value {
+            font-size: 1.85rem;
+            font-weight: 700;
+            color: var(--text-dark);
+            letter-spacing: -0.02em;
+        }
+
+        .kpi-footer {
+            display: flex;
+            align-items: center;
+            gap: 0.4rem;
+            font-size: 0.82rem;
+            color: var(--text-muted);
+        }
+
+        .trend-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.2rem;
+            padding: 0.15rem 0.4rem;
+            border-radius: 6px;
+            font-weight: 600;
+        }
+
+        .trend-badge.up {
+            background-color: #ecfdf5;
+            color: #10b981;
+        }
+
+        /* Visualization Layout Row */
+        .vis-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 1.5rem;
+        }
+
+        .vis-card {
+            background: var(--bg-card);
+            border: 1px solid var(--border-color);
+            border-radius: 12px;
+            padding: 1.5rem;
+            box-shadow: var(--shadow-sm);
+            display: flex;
+            flex-direction: column;
+            gap: 1.5rem;
+        }
+
+        .vis-card-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .vis-card-title {
+            font-size: 1.05rem;
+            font-weight: 700;
+            color: var(--text-dark);
+        }
+
+        /* Dropdown Select Styling */
+        .select-filter {
+            padding: 0.4rem 0.8rem;
+            border: 1px solid var(--border-color);
+            border-radius: 6px;
+            font-family: var(--font-family);
+            font-size: 0.8rem;
+            font-weight: 600;
+            color: var(--text-dark);
+            background: #ffffff;
+            outline: none;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .select-filter:hover {
+            background: #f8fafc;
+        }
+
+        /* Funnel Chart Design */
+        .funnel-container {
+            display: flex;
+            align-items: center;
+            gap: 1.5rem;
+            flex: 1;
+        }
+
+        .funnel-graphic {
+            flex: 1.2;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 0.4rem;
+        }
+
+        /* Funnel Blocks styled to narrow down */
+        .funnel-bar {
+            height: 38px;
+            border-radius: 6px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #ffffff;
+            font-weight: 700;
+            font-size: 0.85rem;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+            transition: transform 0.3s;
+        }
+
+        .funnel-bar:hover {
+            transform: scale(1.02);
+        }
+
+        .funnel-bar.level-1 { width: 100%; background: linear-gradient(90deg, #5b3af2, #6366f1); }
+        .funnel-bar.level-2 { width: 85%; background: linear-gradient(90deg, #6366f1, #3b82f6); }
+        .funnel-bar.level-3 { width: 70%; background: linear-gradient(90deg, #3b82f6, #0ea5e9); }
+        .funnel-bar.level-4 { width: 55%; background: linear-gradient(90deg, #0ea5e9, #10b981); }
+        .funnel-bar.level-5 { width: 40%; background: linear-gradient(90deg, #10b981, #22c55e); }
+        .funnel-bar.level-6 { width: 25%; background: linear-gradient(90deg, #22c55e, #4ade80); }
+
+        .funnel-legend {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            gap: 0.65rem;
+        }
+
+        .legend-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            font-size: 0.88rem;
+            font-weight: 500;
+        }
+
+        .legend-label-col {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            color: var(--text-dark);
+        }
+
+        .legend-dot {
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+        }
+
+        .legend-dot.level-1 { background-color: #5b3af2; }
+        .legend-dot.level-2 { background-color: #6366f1; }
+        .legend-dot.level-3 { background-color: #3b82f6; }
+        .legend-dot.level-4 { background-color: #0ea5e9; }
+        .legend-dot.level-5 { background-color: #10b981; }
+        .legend-dot.level-6 { background-color: #4ade80; }
+
+        .legend-val {
+            font-weight: 700;
+            color: var(--text-dark);
+        }
+
+        /* Bezier Activity Chart SVG */
+        .chart-wrapper {
+            flex: 1;
+            position: relative;
+            min-height: 200px;
+        }
+
+        /* Details list Grid Section */
+        .details-grid {
+            display: grid;
+            grid-template-columns: 1.4fr 1fr;
+            gap: 1.5rem;
+        }
+
+        .details-card {
+            background: var(--bg-card);
+            border: 1px solid var(--border-color);
+            border-radius: 12px;
+            padding: 1.5rem;
+            box-shadow: var(--shadow-sm);
+            display: flex;
+            flex-direction: column;
+            gap: 1.25rem;
+        }
+
+        .details-card-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .details-card-title {
+            font-size: 1.05rem;
+            font-weight: 700;
+            color: var(--text-dark);
+        }
+
+        .view-all-link {
+            font-size: 0.85rem;
+            font-weight: 600;
+            color: var(--primary);
+            text-decoration: none;
+            display: flex;
+            align-items: center;
+            gap: 0.25rem;
+        }
+
+        .view-all-link:hover {
+            text-decoration: underline;
+        }
+
+        /* Recent Leads Table */
+        .leads-table-container {
+            overflow-x: auto;
+            width: 100%;
+        }
+
+        .leads-table {
+            width: 100%;
+            border-collapse: collapse;
+            text-align: left;
+        }
+
+        .leads-table th {
+            font-size: 0.78rem;
+            font-weight: 600;
+            color: var(--text-muted);
+            text-transform: uppercase;
+            padding: 0.75rem 1rem;
+            border-bottom: 1px solid var(--border-color);
+        }
+
+        .leads-table td {
+            padding: 0.85rem 1rem;
+            border-bottom: 1px solid #f8fafc;
+            font-size: 0.88rem;
+            vertical-align: middle;
+        }
+
+        .leads-table tr:last-child td {
+            border-bottom: none;
+        }
+
+        /* Lead Column Styling */
+        .lead-profile-cell {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+        }
+
+        .lead-avatar {
+            width: 36px;
+            height: 36px;
+            border-radius: 50%;
+            object-fit: cover;
+            border: 1px solid var(--border-color);
+        }
+
+        .avatar-placeholder {
+            width: 36px;
+            height: 36px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 700;
+            font-size: 0.8rem;
+            color: #ffffff;
+        }
+
+        .lead-info {
+            display: flex;
+            flex-direction: column;
+            gap: 0.15rem;
+        }
+
+        .lead-name {
+            font-weight: 700;
+            color: var(--text-dark);
+        }
+
+        .lead-title-sub {
+            font-size: 0.75rem;
+            color: var(--text-muted);
+        }
+
+        .company-cell {
+            display: flex;
+            flex-direction: column;
+            gap: 0.15rem;
+        }
+
+        .company-name {
+            font-weight: 600;
+            color: var(--text-dark);
+        }
+
+        .company-industry {
+            font-size: 0.75rem;
+            color: var(--text-muted);
+        }
+
+        /* Status Badges */
+        .status-badge {
+            display: inline-block;
+            padding: 0.25rem 0.6rem;
+            border-radius: 6px;
+            font-size: 0.78rem;
+            font-weight: 600;
+            text-align: center;
+        }
+
+        .status-badge.enriched { background-color: var(--status-enriched-bg); color: var(--status-enriched-text); }
+        .status-badge.new { background-color: var(--status-new-bg); color: var(--status-new-text); }
+        .status-badge.contacted { background-color: var(--status-contacted-bg); color: var(--status-contacted-text); }
+        .status-badge.interested { background-color: var(--status-interested-bg); color: var(--status-interested-text); }
+
+        .time-added {
+            color: var(--text-muted);
+            font-size: 0.85rem;
+        }
+
+        .action-cell {
+            color: var(--text-muted);
+            cursor: pointer;
+            text-align: center;
+        }
+
+        .action-cell:hover {
+            color: var(--text-dark);
+        }
+
+        /* Upcoming Meetings Layout */
+        .meetings-list {
+            display: flex;
+            flex-direction: column;
+            gap: 0.85rem;
+        }
+
+        .meeting-item {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 0.85rem;
+            border-radius: 10px;
+            border: 1px solid #f1f5f9;
+            background: #ffffff;
+            transition: border-color 0.2s;
+        }
+
+        .meeting-item:hover {
+            border-color: #e2e8f0;
+        }
+
+        .meeting-time-box {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            color: var(--text-dark);
+        }
+
+        .calendar-icon-box {
+            width: 32px;
+            height: 32px;
+            border-radius: 6px;
+            background: var(--primary-light);
+            color: var(--primary);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .time-details {
+            display: flex;
+            flex-direction: column;
+            gap: 0.15rem;
+        }
+
+        .time-val {
+            font-size: 0.85rem;
+            font-weight: 700;
+        }
+
+        .day-val {
+            font-size: 0.72rem;
+            color: var(--text-muted);
+        }
+
+        .meeting-client-profile {
+            display: flex;
+            align-items: center;
+            gap: 0.65rem;
+            flex: 1;
+            margin-left: 1.25rem;
+        }
+
+        .client-avatar {
+            width: 32px;
+            height: 32px;
+            border-radius: 50%;
+            object-fit: cover;
+            border: 1px solid var(--border-color);
+        }
+
+        .client-info {
+            display: flex;
+            flex-direction: column;
+            gap: 0.15rem;
+        }
+
+        .client-name {
+            font-size: 0.85rem;
+            font-weight: 700;
+            color: var(--text-dark);
+        }
+
+        .client-company {
+            font-size: 0.72rem;
+            color: var(--text-muted);
+        }
+
+        .btn-join {
+            padding: 0.45rem 1rem;
+            border: 1px solid var(--border-color);
+            background: #ffffff;
+            color: var(--text-dark);
+            border-radius: 6px;
+            font-family: var(--font-family);
+            font-size: 0.8rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .btn-join:hover {
+            background: var(--primary);
+            border-color: var(--primary);
+            color: #ffffff;
+        }
+
+        .view-all-meetings-footer {
+            text-align: center;
+            margin-top: 0.5rem;
+        }
+
+        .meetings-footer-link {
+            font-size: 0.85rem;
+            font-weight: 600;
+            color: var(--primary);
+            text-decoration: none;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.25rem;
+        }
+
+        .meetings-footer-link:hover {
+            text-decoration: underline;
+        }
+
+        /* Custom Dialog Modal (New Lead) */
+        .modal-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(15, 23, 42, 0.4);
+            backdrop-filter: blur(4px);
+            z-index: 200;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            opacity: 0;
+            pointer-events: none;
+            transition: opacity 0.3s ease;
+        }
+
+        .modal-overlay.active {
+            opacity: 1;
+            pointer-events: auto;
+        }
+
+        .modal-container {
+            background: #ffffff;
+            width: 100%;
+            max-width: 480px;
+            border-radius: 16px;
+            padding: 2rem;
+            box-shadow: var(--shadow-lg);
+            display: flex;
+            flex-direction: column;
+            gap: 1.5rem;
+            transform: scale(0.9);
+            transition: transform 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+        }
+
+        .modal-overlay.active .modal-container {
+            transform: scale(1);
+        }
+
+        .modal-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .modal-title {
+            font-size: 1.25rem;
+            font-weight: 700;
+            color: var(--text-dark);
+        }
+
+        .btn-close-modal {
+            background: none;
+            border: none;
+            color: var(--text-muted);
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+        }
+
+        .btn-close-modal:hover {
+            color: var(--text-dark);
+        }
+
+        .modal-form {
+            display: flex;
+            flex-direction: column;
+            gap: 1.2rem;
+        }
+
+        .modal-form-group {
+            display: flex;
+            flex-direction: column;
+            gap: 0.4rem;
+        }
+
+        .modal-form-group label {
+            font-size: 0.85rem;
+            font-weight: 600;
+            color: var(--text-dark);
+        }
+
+        .modal-form-group input,
+        .modal-form-group select {
+            padding: 0.7rem 0.9rem;
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            font-family: var(--font-family);
+            font-size: 0.9rem;
+            outline: none;
+            background: #ffffff;
+            transition: border-color 0.2s;
+        }
+
+        .modal-form-group input:focus,
+        .modal-form-group select:focus {
+            border-color: var(--primary);
+        }
+
+        .modal-form-buttons {
+            display: flex;
+            justify-content: flex-end;
+            gap: 0.75rem;
+            margin-top: 0.5rem;
+        }
+
+        .btn-cancel {
+            padding: 0.65rem 1.2rem;
+            background: #ffffff;
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            font-family: var(--font-family);
+            font-weight: 600;
+            font-size: 0.9rem;
+            cursor: pointer;
+            color: var(--text-dark);
+            transition: all 0.2s;
+        }
+
+        .btn-cancel:hover {
+            background: #f8fafc;
+        }
+
+        .btn-submit-lead {
+            padding: 0.65rem 1.2rem;
+            background: var(--primary);
+            border: none;
+            border-radius: 8px;
+            font-family: var(--font-family);
+            font-weight: 600;
+            font-size: 0.9rem;
+            cursor: pointer;
+            color: #ffffff;
+            transition: all 0.2s;
+        }
+
+        .btn-submit-lead:hover {
+            background: var(--primary-hover);
+        }
+
+        /* Responsive Breakpoints */
+        @media (max-width: 1200px) {
+            .kpi-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+            .vis-grid {
+                grid-template-columns: 1fr;
+            }
+            .details-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        @media (max-width: 860px) {
+            .sidebar {
+                width: 70px;
+                padding: 1.5rem 0.5rem;
+                align-items: center;
+            }
+            .logo-text,
+            .nav-text,
+            .inbox-badge,
+            .sidebar-user .user-details,
+            .sidebar-user .user-dropdown {
+                display: none;
+            }
+            .sidebar-user {
+                padding-top: 1rem;
+                justify-content: center;
+            }
+            .main-workspace {
+                margin-left: 70px;
+                padding: 1.5rem;
+            }
+            .logo-container {
+                justify-content: center;
+                margin-bottom: 1.5rem;
+            }
+        }
+
+        @media (max-width: 600px) {
+            .kpi-grid {
+                grid-template-columns: 1fr;
+            }
+            .workspace-header {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 1rem;
+            }
+            .header-actions {
+                width: 100%;
+                justify-content: space-between;
+            }
+            .search-wrapper {
+                width: 100%;
+                flex: 1;
+            }
+        }
+        
+        /* Clickable elements */
+        .clickable-row {
+            cursor: pointer;
+            transition: background-color 0.15s ease;
+        }
+        .clickable-row:hover {
+            background-color: #f8fafc !important;
+        }
+        .clickable-meeting {
+            cursor: pointer;
+            transition: border-color 0.15s ease, box-shadow 0.15s ease;
+        }
+        .clickable-meeting:hover {
+            border-color: var(--primary) !important;
+            box-shadow: var(--shadow-sm);
+        }
+    </style>
+</head>
+<body>
+    <!-- Sidebar Navigation -->
+    <div class="sidebar">
+        <div>
+            <!-- Logo link -->
+            <a href="#" class="logo-container">
+                <span class="logo-icon">
+                    <svg width="28" height="28" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                        <rect x="2" y="6" width="20" height="14" rx="4" stroke="currentColor" stroke-width="2.5"/>
+                        <circle cx="8" cy="13" r="1.5" fill="currentColor"/>
+                        <circle cx="16" cy="13" r="1.5" fill="currentColor"/>
+                        <path d="M11 17H13" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+                        <path d="M9 3H15" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+                        <path d="M12 3V6" stroke="currentColor" stroke-width="2"/>
+                    </svg>
+                </span>
+                <span class="logo-text">Sales<span>AI</span></span>
+            </a>
+
+            <!-- Navigation Links -->
+            <ul class="nav-links">
+                <li class="nav-item active">
+                    <a href="dashboard.html">
+                        <span class="nav-icon">
+                            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+                                <rect x="3" y="3" width="7" height="9"/>
+                                <rect x="14" y="3" width="7" height="5"/>
+                                <rect x="14" y="12" width="7" height="9"/>
+                                <rect x="3" y="16" width="7" height="5"/>
+                            </svg>
+                        </span>
+                        <span class="nav-text">Dashboard</span>
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a href="leads.html">
+                        <span class="nav-icon">
+                            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+                                <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/>
+                                <circle cx="9" cy="7" r="4"/>
+                                <path d="M23 21v-2a4 4 0 0 0-3-3.87"/>
+                                <path d="M16 3.13a4 4 0 0 1 0 7.75"/>
+                            </svg>
+                        </span>
+                        <span class="nav-text">Leads</span>
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a href="companies.html">
+                        <span class="nav-icon">
+                            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+                                <path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"/>
+                            </svg>
+                        </span>
+                        <span class="nav-text">Companies</span>
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a href="campaigns.html">
+                        <span class="nav-icon">
+                            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+                                <polygon points="12 2 2 7 12 12 22 7 12 2"/>
+                                <polyline points="2 17 12 22 22 17"/>
+                                <polyline points="2 12 12 17 22 12"/>
+                            </svg>
+                        </span>
+                        <span class="nav-text">Campaigns</span>
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a href="inbox.html">
+                        <span class="nav-icon">
+                            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+                                <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/>
+                            </svg>
+                        </span>
+                        <span class="nav-text">Inbox</span>
+                        <span class="inbox-badge">12</span>
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a href="meetings.html">
+                        <span class="nav-icon">
+                            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+                                <rect x="3" y="4" width="18" height="18" rx="2" ry="2"/>
+                                <line x1="16" y1="2" x2="16" y2="6"/>
+                                <line x1="8" y1="2" x2="8" y2="6"/>
+                                <line x1="3" y1="10" x2="21" y2="10"/>
+                            </svg>
+                        </span>
+                        <span class="nav-text">Meetings</span>
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a href="tasks.html">
+                        <span class="nav-icon">
+                            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+                                <polyline points="9 11 12 14 22 4"/>
+                                <path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"/>
+                            </svg>
+                        </span>
+                        <span class="nav-text">Tasks</span>
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a href="deals.html">
+                        <span class="nav-icon">
+                            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+                                <line x1="12" y1="1" x2="12" y2="23"/>
+                                <path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/>
+                            </svg>
+                        </span>
+                        <span class="nav-text">Deals</span>
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a href="reports.html">
+                        <span class="nav-icon">
+                            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+                                <line x1="18" y1="20" x2="18" y2="10"/>
+                                <line x1="12" y1="20" x2="12" y2="4"/>
+                                <line x1="6" y1="20" x2="6" y2="14"/>
+                            </svg>
+                        </span>
+                        <span class="nav-text">Reports</span>
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a href="settings.html">
+                        <span class="nav-icon">
+                            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+                                <circle cx="12" cy="12" r="3"/>
+                                <path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 1 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 1 1-2.83-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 1 1 2.83-2.83l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 1 1 2.83 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"/>
+                            </svg>
+                        </span>
+                        <span class="nav-text">Settings</span>
+                    </a>
+                </li>
+            </ul>
+        </div>
+
+        <!-- Sidebar User footer profile -->
+        <div class="sidebar-user">
+            <img src="priya_sharma_avatar.png" alt="Priya Sharma" class="user-avatar">
+            <div class="user-details">
+                <div class="user-name">Priya Sharma</div>
+                <div class="user-role">Sales Representative</div>
+            </div>
+            <span class="user-dropdown">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="6 9 12 15 18 9"/></svg>
+            </span>
+        </div>
+    </div>
+
+    <!-- Main Content Panel -->
+    <div class="main-workspace">
+        
+        <!-- Workspace Header -->
+        <div class="workspace-header">
+            <div class="header-title-section">
+                <h1 class="workspace-title">Dashboard</h1>
+                <p class="workspace-subtitle">Welcome back, Priya! Here's what's happening today.</p>
+            </div>
+            <div class="header-actions">
+                <div class="search-wrapper">
+                    <span class="search-icon">
+                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+                    </span>
+                    <input type="text" placeholder="Search leads, companies..." class="search-input">
+                </div>
+                <button class="icon-btn" onclick="alert('No new alerts.')">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/>
+                        <path d="M13.73 21a2 2 0 0 1-3.46 0"/>
+                    </svg>
+                    <span class="btn-badge">5</span>
+                </button>
+                <button class="icon-btn" onclick="alert('View Calendar dashboard.')">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+                        <rect x="3" y="4" width="18" height="18" rx="2" ry="2"/>
+                        <line x1="16" y1="2" x2="16" y2="6"/>
+                        <line x1="8" y1="2" x2="8" y2="6"/>
+                        <line x1="3" y1="10" x2="21" y2="10"/>
+                    </svg>
+                </button>
+                <button class="btn-new-lead" id="openNewLeadModalBtn">
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+                    New Lead
+                </button>
+            </div>
+        </div>
+
+        <!-- KPI Metrics Grid Row -->
+        <div class="kpi-grid">
+            <!-- Metric 1: New Leads -->
+            <div class="kpi-card">
+                <div class="kpi-header">
+                    <span class="kpi-title">New Leads</span>
+                    <div class="kpi-icon-box leads">
+                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+                            <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/>
+                            <circle cx="9" cy="7" r="4"/>
+                            <path d="M23 21v-2a4 4 0 0 0-3-3.87"/>
+                            <path d="M16 3.13a4 4 0 0 1 0 7.75"/>
+                        </svg>
+                    </div>
+                </div>
+                <div class="kpi-value" id="kpiLeadsVal">24</div>
+                <div class="kpi-footer">
+                    <span class="trend-badge up">
+                        <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><polyline points="18 15 12 9 6 15"/></svg>
+                        14%
+                    </span>
+                    vs yesterday
+                </div>
+            </div>
+
+            <!-- Metric 2: Emails Sent -->
+            <div class="kpi-card">
+                <div class="kpi-header">
+                    <span class="kpi-title">Emails Sent</span>
+                    <div class="kpi-icon-box emails">
+                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+                            <path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/>
+                            <polyline points="22,6 12,13 2,6"/>
+                        </svg>
+                    </div>
+                </div>
+                <div class="kpi-value">130</div>
+                <div class="kpi-footer">
+                    <span class="trend-badge up">
+                        <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><polyline points="18 15 12 9 6 15"/></svg>
+                        8%
+                    </span>
+                    vs yesterday
+                </div>
+            </div>
+
+            <!-- Metric 3: Meetings Today -->
+            <div class="kpi-card">
+                <div class="kpi-header">
+                    <span class="kpi-title">Meetings Today</span>
+                    <div class="kpi-icon-box meetings">
+                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+                            <rect x="3" y="4" width="18" height="18" rx="2" ry="2"/>
+                            <line x1="16" y1="2" x2="16" y2="6"/>
+                            <line x1="8" y1="2" x2="8" y2="6"/>
+                            <line x1="3" y1="10" x2="21" y2="10"/>
+                        </svg>
+                    </div>
+                </div>
+                <div class="kpi-value">4</div>
+                <div class="kpi-footer">
+                    <span class="trend-badge up">
+                        <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><polyline points="18 15 12 9 6 15"/></svg>
+                        33%
+                    </span>
+                    vs yesterday
+                </div>
+            </div>
+
+            <!-- Metric 4: Won Deals -->
+            <div class="kpi-card">
+                <div class="kpi-header">
+                    <span class="kpi-title">Won Deals</span>
+                    <div class="kpi-icon-box won">
+                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+                            <path d="M6 9H4.5a2.5 2.5 0 0 1 0-5H6"/>
+                            <path d="M18 9h1.5a2.5 2.5 0 0 0 0-5H18"/>
+                            <path d="M4 22h16"/>
+                            <path d="M10 14.66V17c0 .55-.45 1-1 1H4v2h16v-2h-5c-.55 0-1-.45-1-1v-2.34"/>
+                            <path d="M12 2a4 4 0 0 1 4 4v8H8V6a4 4 0 0 1 4-4z"/>
+                        </svg>
+                    </div>
+                </div>
+                <div class="kpi-value">₹18,00,000</div>
+                <div class="kpi-footer">
+                    <span class="trend-badge up">
+                        <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><polyline points="18 15 12 9 6 15"/></svg>
+                        22%
+                    </span>
+                    vs last week
+                </div>
+            </div>
+        </div>
+
+        <!-- Visualization Graphs Row -->
+        <div class="vis-grid">
+            
+            <!-- Pipeline Overview Funnel Card -->
+            <div class="vis-card">
+                <div class="vis-card-header">
+                    <h3 class="vis-card-title">Pipeline Overview</h3>
+                    <select class="select-filter">
+                        <option>This Week</option>
+                        <option>This Month</option>
+                    </select>
+                </div>
+                
+                <div class="funnel-container">
+                    <div class="funnel-graphic">
+                        <div class="funnel-bar level-1">New Leads</div>
+                        <div class="funnel-bar level-2">Contacted</div>
+                        <div class="funnel-bar level-3">Interested</div>
+                        <div class="funnel-bar level-4">Meeting</div>
+                        <div class="funnel-bar level-5">Proposal</div>
+                        <div class="funnel-bar level-6">Won</div>
+                    </div>
+                    <div class="funnel-legend">
+                        <div class="legend-row">
+                            <div class="legend-label-col">
+                                <span class="legend-dot level-1"></span>
+                                <span>New Leads</span>
+                            </div>
+                            <span class="legend-val" id="funnelNewLeadsVal">120</span>
+                        </div>
+                        <div class="legend-row">
+                            <div class="legend-label-col">
+                                <span class="legend-dot level-2"></span>
+                                <span>Contacted</span>
+                            </div>
+                            <span class="legend-val">85</span>
+                        </div>
+                        <div class="legend-row">
+                            <div class="legend-label-col">
+                                <span class="legend-dot level-3"></span>
+                                <span>Interested</span>
+                            </div>
+                            <span class="legend-val">45</span>
+                        </div>
+                        <div class="legend-row">
+                            <div class="legend-label-col">
+                                <span class="legend-dot level-4"></span>
+                                <span>Meeting</span>
+                            </div>
+                            <span class="legend-val">20</span>
+                        </div>
+                        <div class="legend-row">
+                            <div class="legend-label-col">
+                                <span class="legend-dot level-5"></span>
+                                <span>Proposal</span>
+                            </div>
+                            <span class="legend-val">10</span>
+                        </div>
+                        <div class="legend-row">
+                            <div class="legend-label-col">
+                                <span class="legend-dot level-6"></span>
+                                <span>Won</span>
+                            </div>
+                            <span class="legend-val">5</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Activity Overview Chart Card -->
+            <div class="vis-card">
+                <div class="vis-card-header">
+                    <h3 class="vis-card-title">Activity Overview</h3>
+                    <select class="select-filter">
+                        <option>This Week</option>
+                        <option>This Month</option>
+                    </select>
+                </div>
+                
+                <div class="chart-wrapper">
+                    <!-- Bezier Curve Graph using fully responsive SVG -->
+                    <svg width="100%" height="100%" viewBox="0 0 450 200" preserveAspectRatio="none">
+                        <defs>
+                            <linearGradient id="curveGrad" x1="0" y1="0" x2="0" y2="1">
+                                <stop offset="0%" stop-color="#5b3af2" stop-opacity="0.2"/>
+                                <stop offset="100%" stop-color="#5b3af2" stop-opacity="0.0"/>
+                            </linearGradient>
+                        </defs>
+                        <!-- Grid helper lines -->
+                        <line x1="40" y1="20" x2="430" y2="20" stroke="#f1f5f9" stroke-width="1.5"/>
+                        <line x1="40" y1="60" x2="430" y2="60" stroke="#f1f5f9" stroke-width="1.5"/>
+                        <line x1="40" y1="100" x2="430" y2="100" stroke="#f1f5f9" stroke-width="1.5"/>
+                        <line x1="40" y1="140" x2="430" y2="140" stroke="#f1f5f9" stroke-width="1.5"/>
+                        <line x1="40" y1="170" x2="430" y2="170" stroke="#f1f5f9" stroke-width="1.5"/>
+
+                        <!-- Grid labels (Y-axis) -->
+                        <text x="15" y="24" fill="#94a3b8" font-size="11" font-weight="600">100</text>
+                        <text x="15" y="64" fill="#94a3b8" font-size="11" font-weight="600">75</text>
+                        <text x="15" y="104" fill="#94a3b8" font-size="11" font-weight="600">50</text>
+                        <text x="15" y="144" fill="#94a3b8" font-size="11" font-weight="600">25</text>
+                        <text x="22" y="174" fill="#94a3b8" font-size="11" font-weight="600">0</text>
+
+                        <!-- Area curve -->
+                        <!-- Data Points mapping: Mon(40, 140), Tue(105, 100), Wed(170, 95), Thu(235, 70), Fri(300, 85), Sat(365, 45), Sun(430, 78) -->
+                        <path d="M 40 140 C 72.5 120, 72.5 100, 105 100 C 137.5 100, 137.5 95, 170 95 C 202.5 95, 202.5 70, 235 70 C 267.5 70, 267.5 85, 300 85 C 332.5 85, 332.5 45, 365 45 C 397.5 45, 397.5 78, 430 78 L 430 170 L 40 170 Z" fill="url(#curveGrad)"/>
+
+                        <!-- Line path -->
+                        <path d="M 40 140 C 72.5 120, 72.5 100, 105 100 C 137.5 100, 137.5 95, 170 95 C 202.5 95, 202.5 70, 235 70 C 267.5 70, 267.5 85, 300 85 C 332.5 85, 332.5 45, 365 45 C 397.5 45, 397.5 78, 430 78" fill="none" stroke="#5b3af2" stroke-width="2.5" stroke-linecap="round"/>
+
+                        <!-- Data dots -->
+                        <circle cx="40" cy="140" r="4.5" fill="#ffffff" stroke="#5b3af2" stroke-width="2"/>
+                        <circle cx="105" cy="100" r="4.5" fill="#ffffff" stroke="#5b3af2" stroke-width="2"/>
+                        <circle cx="170" cy="95" r="4.5" fill="#ffffff" stroke="#5b3af2" stroke-width="2"/>
+                        <circle cx="235" cy="70" r="4.5" fill="#ffffff" stroke="#5b3af2" stroke-width="2"/>
+                        <circle cx="300" cy="85" r="4.5" fill="#ffffff" stroke="#5b3af2" stroke-width="2"/>
+                        <circle cx="365" cy="45" r="4.5" fill="#ffffff" stroke="#5b3af2" stroke-width="2"/>
+                        <circle cx="430" cy="78" r="4.5" fill="#ffffff" stroke="#5b3af2" stroke-width="2"/>
+
+                        <!-- X-axis Labels -->
+                        <text x="30" y="195" fill="#94a3b8" font-size="11" font-weight="600">Mon</text>
+                        <text x="96" y="195" fill="#94a3b8" font-size="11" font-weight="600">Tue</text>
+                        <text x="160" y="195" fill="#94a3b8" font-size="11" font-weight="600">Wed</text>
+                        <text x="226" y="195" fill="#94a3b8" font-size="11" font-weight="600">Thu</text>
+                        <text x="293" y="195" fill="#94a3b8" font-size="11" font-weight="600">Fri</text>
+                        <text x="357" y="195" fill="#94a3b8" font-size="11" font-weight="600">Sat</text>
+                        <text x="420" y="195" fill="#94a3b8" font-size="11" font-weight="600">Sun</text>
+                    </svg>
+                </div>
+            </div>
+        </div>
+
+        <!-- Detail Lists and Table Grid Row -->
+        <div class="details-grid">
+            
+            <!-- Recent Leads Table -->
+            <div class="details-card">
+                <div class="details-card-header">
+                    <h3 class="details-card-title">Recent Leads</h3>
+                    <a href="leads.html" class="view-all-link">View All</a>
+                </div>
+                
+                <div class="leads-table-container">
+                    <table class="leads-table">
+                        <thead>
+                            <tr>
+                                <th>Name</th>
+                                <th>Company</th>
+                                <th>Status</th>
+                                <th>Added On</th>
+                                <th></th>
+                            </tr>
+                        </thead>
+                        <tbody id="leadsTableBody">
+                            <!-- Lead 1: Rahul Sharma -->
+                            <tr class="clickable-row" onclick="window.location.href='lead-profile.html'">
+                                <td>
+                                    <div class="lead-profile-cell">
+                                        <img src="rahul_sharma_avatar.png" alt="Rahul Sharma" class="lead-avatar">
+                                        <div class="lead-info">
+                                            <span class="lead-name">Rahul Sharma</span>
+                                            <span class="lead-title-sub">CFO</span>
+                                        </div>
+                                    </div>
+                                </td>
+                                <td>
+                                    <div class="company-cell">
+                                        <span class="company-name">XYZ Logistics</span>
+                                        <span class="company-industry">Logistics</span>
+                                    </div>
+                                </td>
+                                <td><span class="status-badge enriched">Enriched</span></td>
+                                <td><span class="time-added">2 min ago</span></td>
+                                <td class="action-cell">
+                                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><circle cx="12" cy="12" r="1"/><circle cx="12" cy="5" r="1"/><circle cx="12" cy="19" r="1"/></svg>
+                                </td>
+                            </tr>
+                            <!-- Lead 2: Anita Verma -->
+                            <tr>
+                                <td>
+                                    <div class="lead-profile-cell">
+                                        <div class="avatar-placeholder" style="background-color: #f43f5e;">AV</div>
+                                        <div class="lead-info">
+                                            <span class="lead-name">Anita Verma</span>
+                                            <span class="lead-title-sub">Finance Manager</span>
+                                        </div>
+                                    </div>
+                                </td>
+                                <td>
+                                    <div class="company-cell">
+                                        <span class="company-name">ABC Pvt Ltd</span>
+                                        <span class="company-industry">Manufacturing</span>
+                                    </div>
+                                </td>
+                                <td><span class="status-badge new">New</span></td>
+                                <td><span class="time-added">15 min ago</span></td>
+                                <td class="action-cell">
+                                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><circle cx="12" cy="12" r="1"/><circle cx="12" cy="5" r="1"/><circle cx="12" cy="19" r="1"/></svg>
+                                </td>
+                            </tr>
+                            <!-- Lead 3: Vikram Patel -->
+                            <tr>
+                                <td>
+                                    <div class="lead-profile-cell">
+                                        <div class="avatar-placeholder" style="background-color: #0ea5e9;">VP</div>
+                                        <div class="lead-info">
+                                            <span class="lead-name">Vikram Patel</span>
+                                            <span class="lead-title-sub">Director</span>
+                                        </div>
+                                    </div>
+                                </td>
+                                <td>
+                                    <div class="company-cell">
+                                        <span class="company-name">SpeedX Couriers</span>
+                                        <span class="company-industry">Logistics</span>
+                                    </div>
+                                </td>
+                                <td><span class="status-badge contacted">Contacted</span></td>
+                                <td><span class="time-added">1 hr ago</span></td>
+                                <td class="action-cell">
+                                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><circle cx="12" cy="12" r="1"/><circle cx="12" cy="5" r="1"/><circle cx="12" cy="19" r="1"/></svg>
+                                </td>
+                            </tr>
+                            <!-- Lead 4: Suresh Gupta -->
+                            <tr>
+                                <td>
+                                    <div class="lead-profile-cell">
+                                        <div class="avatar-placeholder" style="background-color: #64748b;">SG</div>
+                                        <div class="lead-info">
+                                            <span class="lead-name">Suresh Gupta</span>
+                                            <span class="lead-title-sub">CFO</span>
+                                        </div>
+                                    </div>
+                                </td>
+                                <td>
+                                    <div class="company-cell">
+                                        <span class="company-name">Gati Supply Chain</span>
+                                        <span class="company-industry">Logistics</span>
+                                    </div>
+                                </td>
+                                <td><span class="status-badge new">New</span></td>
+                                <td><span class="time-added">2 hr ago</span></td>
+                                <td class="action-cell">
+                                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><circle cx="12" cy="12" r="1"/><circle cx="12" cy="5" r="1"/><circle cx="12" cy="19" r="1"/></svg>
+                                </td>
+                            </tr>
+                            <!-- Lead 5: Neha Singh -->
+                            <tr>
+                                <td>
+                                    <div class="lead-profile-cell">
+                                        <div class="avatar-placeholder" style="background-color: #f97316;">NS</div>
+                                        <div class="lead-info">
+                                            <span class="lead-name">Neha Singh</span>
+                                            <span class="lead-title-sub">Finance Head</span>
+                                        </div>
+                                    </div>
+                                </td>
+                                <td>
+                                    <div class="company-cell">
+                                        <span class="company-name">Orbit Trans</span>
+                                        <span class="company-industry">Logistics</span>
+                                    </div>
+                                </td>
+                                <td><span class="status-badge interested">Interested</span></td>
+                                <td><span class="time-added">3 hr ago</span></td>
+                                <td class="action-cell">
+                                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><circle cx="12" cy="12" r="1"/><circle cx="12" cy="5" r="1"/><circle cx="12" cy="19" r="1"/></svg>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            <!-- Upcoming Meetings list -->
+            <div class="details-card">
+                <div class="details-card-header">
+                    <h3 class="details-card-title">Upcoming Meetings</h3>
+                    <a href="#" class="view-all-link" onclick="alert('Navigating to calendar.')">View Calendar</a>
+                </div>
+
+                <div class="meetings-list">
+                    <!-- Meeting 1: Rahul Sharma -->
+                    <div class="meeting-item clickable-meeting" onclick="window.location.href='lead-profile.html'">
+                        <div class="meeting-time-box">
+                            <span class="calendar-icon-box">
+                                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
+                            </span>
+                            <div class="time-details">
+                                <span class="time-val">03:00 PM</span>
+                                <span class="day-val">Today</span>
+                            </div>
+                        </div>
+                        <div class="meeting-client-profile">
+                            <img src="rahul_sharma_avatar.png" alt="Rahul Sharma" class="client-avatar">
+                            <div class="client-info">
+                                <span class="client-name">Rahul Sharma</span>
+                                <span class="client-company">XYZ Logistics</span>
+                            </div>
+                        </div>
+                        <button class="btn-join" onclick="alert('Joining Google Meet conference call...')">Join</button>
+                    </div>
+
+                    <!-- Meeting 2: Amit Kumar -->
+                    <div class="meeting-item">
+                        <div class="meeting-time-box">
+                            <span class="calendar-icon-box">
+                                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
+                            </span>
+                            <div class="time-details">
+                                <span class="time-val">05:00 PM</span>
+                                <span class="day-val">Today</span>
+                            </div>
+                        </div>
+                        <div class="meeting-client-profile">
+                            <div class="avatar-placeholder" style="width: 32px; height: 32px; font-size: 0.75rem; background-color: #3b82f6;">AK</div>
+                            <div class="client-info">
+                                <span class="client-name">Amit Kumar</span>
+                                <span class="client-company">TransFast India</span>
+                            </div>
+                        </div>
+                        <button class="btn-join" onclick="alert('Joining Google Meet conference call...')">Join</button>
+                    </div>
+
+                    <!-- Meeting 3: Neha Singh -->
+                    <div class="meeting-item">
+                        <div class="meeting-time-box">
+                            <span class="calendar-icon-box">
+                                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
+                            </span>
+                            <div class="time-details">
+                                <span class="time-val">11:00 AM</span>
+                                <span class="day-val">Tomorrow</span>
+                            </div>
+                        </div>
+                        <div class="meeting-client-profile">
+                            <div class="avatar-placeholder" style="width: 32px; height: 32px; font-size: 0.75rem; background-color: #f97316;">NS</div>
+                            <div class="client-info">
+                                <span class="client-name">Neha Singh</span>
+                                <span class="client-company">Orbit Trans</span>
+                            </div>
+                        </div>
+                        <button class="btn-join" onclick="alert('Joining Google Meet conference call...')">Join</button>
+                    </div>
+
+                    <!-- Meeting 4: Vikram Patel -->
+                    <div class="meeting-item">
+                        <div class="meeting-time-box">
+                            <span class="calendar-icon-box">
+                                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
+                            </span>
+                            <div class="time-details">
+                                <span class="time-val">04:00 PM</span>
+                                <span class="day-val">Tomorrow</span>
+                            </div>
+                        </div>
+                        <div class="meeting-client-profile">
+                            <div class="avatar-placeholder" style="width: 32px; height: 32px; font-size: 0.75rem; background-color: #0ea5e9;">VP</div>
+                            <div class="client-info">
+                                <span class="client-name">Vikram Patel</span>
+                                <span class="client-company">SpeedX Couriers</span>
+                            </div>
+                        </div>
+                        <button class="btn-join" onclick="alert('Joining Google Meet conference call...')">Join</button>
+                    </div>
+                </div>
+
+                <div class="view-all-meetings-footer">
+                    <a href="#" class="meetings-footer-link" onclick="alert('Navigating to full meetings list.')">
+                        View All Meetings
+                        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- New Lead Entry Modal Dialog -->
+    <div class="modal-overlay" id="leadModalOverlay">
+        <div class="modal-container">
+            <div class="modal-header">
+                <h3 class="modal-title">Create New Lead</h3>
+                <button class="btn-close-modal" id="closeModalBtn">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+                </button>
+            </div>
+            
+            <form class="modal-form" id="leadForm">
+                <!-- Name field -->
+                <div class="modal-form-group">
+                    <label for="leadName">Full Name</label>
+                    <input type="text" id="leadName" placeholder="e.g. John Doe" required>
+                </div>
+                
+                <!-- Title field -->
+                <div class="modal-form-group">
+                    <label for="leadTitle">Job Title</label>
+                    <input type="text" id="leadTitle" placeholder="e.g. Sales Director" required>
+                </div>
+
+                <!-- Company field -->
+                <div class="modal-form-group">
+                    <label for="leadCompany">Company Name</label>
+                    <input type="text" id="leadCompany" placeholder="e.g. Acme Corp" required>
+                </div>
+
+                <!-- Industry field -->
+                <div class="modal-form-group">
+                    <label for="leadIndustry">Industry</label>
+                    <input type="text" id="leadIndustry" placeholder="e.g. Technology" required>
+                </div>
+
+                <!-- Status field -->
+                <div class="modal-form-group">
+                    <label for="leadStatus">Initial Status</label>
+                    <select id="leadStatus">
+                        <option value="new">New</option>
+                        <option value="enriched">Enriched</option>
+                        <option value="contacted">Contacted</option>
+                        <option value="interested">Interested</option>
+                    </select>
+                </div>
+
+                <!-- Form Controls -->
+                <div class="modal-form-buttons">
+                    <button type="button" class="btn-cancel" id="cancelModalBtn">Cancel</button>
+                    <button type="submit" class="btn-submit-lead">Save Lead</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Modal and Form submission logic -->
+    <script>
+        const openModalBtn = document.getElementById('openNewLeadModalBtn');
+        
+        // Leads List Dataset in memory to handle dynamic additions
+        let leadsCount = 24;
+        let funnelLeadsCount = 120;
+
+        // Redirect "+ New Lead" button to add-lead.html page
+        openModalBtn.addEventListener('click', () => {
+            window.location.href = 'add-lead.html';
+        });
+
+        // Parse URL query parameters to check if we have a newly enriched lead
+        window.addEventListener('DOMContentLoaded', () => {
+            const urlParams = new URLSearchParams(window.location.search);
+            if (urlParams.get('enriched') === 'true') {
+                const name = urlParams.get('name') || 'Rahul Sharma';
+                const title = urlParams.get('title') || 'CFO';
+                const company = urlParams.get('company') || 'XYZ Logistics';
+                const industry = urlParams.get('industry') || 'Logistics & Transportation';
+                const status = urlParams.get('status') || 'enriched';
+
+                // Check if this lead already exists in our table to avoid duplicates on refresh
+                const existingNames = Array.from(document.querySelectorAll('.lead-name')).map(el => el.innerText);
+                if (!existingNames.includes(name)) {
+                    // Generate two initials for avatar placeholder
+                    const initials = name.split(' ').map(n => n[0]).join('').toUpperCase().substring(0, 2);
+                    
+                    // Status coloring helper
+                    let statusClass = 'new';
+                    let statusText = 'New';
+                    if (status === 'enriched') { statusClass = 'enriched'; statusText = 'Enriched'; }
+                    if (status === 'contacted') { statusClass = 'contacted'; statusText = 'Contacted'; }
+                    if (status === 'interested') { statusClass = 'interested'; statusText = 'Interested'; }
+
+                    const tr = document.createElement('tr');
+                    tr.className = 'clickable-row';
+                    tr.onclick = () => { window.location.href = 'lead-profile.html'; };
+                    
+                    // Special check for Rahul Sharma to use the actual generated avatar image!
+                    let avatarHTML = `<div class="avatar-placeholder" style="background-color: #5b3af2;">${initials}</div>`;
+                    if (name === 'Rahul Sharma') {
+                        avatarHTML = `<img src="rahul_sharma_avatar.png" alt="Rahul Sharma" class="lead-avatar">`;
+                    }
+
+                    tr.innerHTML = `
+                        <td>
+                            <div class="lead-profile-cell">
+                                ${avatarHTML}
+                                <div class="lead-info">
+                                    <span class="lead-name">${name}</span>
+                                    <span class="lead-title-sub">${title}</span>
+                                </div>
+                            </div>
+                        </td>
+                        <td>
+                            <div class="company-cell">
+                                <span class="company-name">${company}</span>
+                                <span class="company-industry">${industry}</span>
+                            </div>
+                        </td>
+                        <td><span class="status-badge ${statusClass}">${statusText}</span></td>
+                        <td><span class="time-added">2 min ago</span></td>
+                        <td class="action-cell">
+                            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><circle cx="12" cy="12" r="1"/><circle cx="12" cy="5" r="1"/><circle cx="12" cy="19" r="1"/></svg>
+                        </td>
+                    `;
+
+                    // Insert at top of table body
+                    const tableBody = document.getElementById('leadsTableBody');
+                    tableBody.insertBefore(tr, tableBody.firstChild);
+
+                    // Update Lead KPI Value
+                    leadsCount += 1;
+                    document.getElementById('kpiLeadsVal').innerText = leadsCount;
+
+                    // Update Funnel Lead Value
+                    funnelLeadsCount += 1;
+                    document.getElementById('funnelNewLeadsVal').innerText = funnelLeadsCount;
+                }
+            }
+        });
+    </script>
+</body>
+</html>

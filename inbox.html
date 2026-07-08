@@ -1,0 +1,1552 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SalesAI — Inbox</title>
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --primary: #5b3af2;
+            --primary-hover: #4726d9;
+            --primary-light: #eff1fe;
+            --text-dark: #0f172a;
+            --text-muted: #64748b;
+            --bg-body: #f8fafc;
+            --bg-card: #ffffff;
+            --border-color: #e2e8f0;
+            --font-family: 'Plus Jakarta Sans', sans-serif;
+            --shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
+            --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.05), 0 2px 4px -1px rgba(0, 0, 0, 0.03);
+            --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.04), 0 4px 6px -2px rgba(0, 0, 0, 0.02);
+            
+            --success: #10b981;
+            --success-light: #ecfdf5;
+            --info: #3b82f6;
+            --info-light: #eff6ff;
+            --warning: #f59e0b;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: var(--font-family);
+            background-color: var(--bg-body);
+            color: var(--text-dark);
+            min-height: 100vh;
+            display: flex;
+            overflow: hidden;
+        }
+
+        /* Sidebar Container */
+        .sidebar {
+            width: 260px;
+            background: #ffffff;
+            border-right: 1px solid var(--border-color);
+            padding: 2rem 1.5rem;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            position: fixed;
+            top: 0;
+            bottom: 0;
+            left: 0;
+            z-index: 100;
+        }
+
+        .logo-container {
+            display: flex;
+            align-items: center;
+            gap: 0.6rem;
+            text-decoration: none;
+            color: var(--text-dark);
+            font-weight: 700;
+            font-size: 1.35rem;
+            margin-bottom: 2rem;
+        }
+
+        .logo-icon {
+            color: var(--primary);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .logo-text span {
+            color: var(--primary);
+        }
+
+        /* Sidebar Navigation */
+        .nav-links {
+            display: flex;
+            flex-direction: column;
+            gap: 0.35rem;
+            list-style: none;
+            flex: 1;
+        }
+
+        .nav-item a {
+            display: flex;
+            align-items: center;
+            gap: 0.85rem;
+            padding: 0.75rem 1rem;
+            color: var(--text-muted);
+            text-decoration: none;
+            font-weight: 600;
+            font-size: 0.95rem;
+            border-radius: 8px;
+            transition: all 0.2s ease;
+        }
+
+        .nav-item a:hover {
+            color: var(--primary);
+            background-color: #f8fafc;
+        }
+
+        .nav-item.active a {
+            color: var(--primary);
+            background-color: var(--primary-light);
+        }
+
+        .nav-icon {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            width: 20px;
+            height: 20px;
+        }
+
+        .inbox-badge {
+            margin-left: auto;
+            background-color: var(--primary);
+            color: #ffffff;
+            font-size: 0.75rem;
+            font-weight: 700;
+            padding: 0.15rem 0.5rem;
+            border-radius: 999px;
+        }
+
+        /* Sidebar User Profile */
+        .sidebar-user {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            padding-top: 1.5rem;
+            border-top: 1px solid var(--border-color);
+            margin-top: 1.5rem;
+        }
+
+        .user-avatar {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            object-fit: cover;
+            border: 1px solid var(--border-color);
+        }
+
+        .user-details {
+            flex: 1;
+            min-width: 0;
+        }
+
+        .user-name {
+            font-size: 0.88rem;
+            font-weight: 700;
+            color: var(--text-dark);
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+        .user-role {
+            font-size: 0.75rem;
+            color: var(--text-muted);
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+        .user-dropdown {
+            color: var(--text-muted);
+            cursor: pointer;
+        }
+
+        /* Main Workspace Content (Fixed for 3-pane layout) */
+        .main-workspace {
+            margin-left: 260px;
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            height: 100vh;
+            overflow: hidden;
+        }
+
+        /* Top Header Area */
+        .workspace-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 1.25rem 2rem;
+            background-color: #ffffff;
+            border-bottom: 1px solid var(--border-color);
+            flex-shrink: 0;
+        }
+
+        .workspace-breadcrumbs {
+            font-size: 0.82rem;
+            color: var(--text-muted);
+            font-weight: 500;
+            display: flex;
+            align-items: center;
+            gap: 0.4rem;
+        }
+
+        .workspace-breadcrumbs span {
+            cursor: pointer;
+        }
+
+        .workspace-breadcrumbs span:hover {
+            color: var(--primary);
+        }
+
+        .workspace-breadcrumbs span.active {
+            color: var(--text-dark);
+            font-weight: 600;
+            cursor: default;
+        }
+
+        .header-actions {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+        }
+
+        .search-wrapper {
+            position: relative;
+            width: 260px;
+        }
+
+        .search-input {
+            width: 100%;
+            background-color: #f8fafc;
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            padding: 0.5rem 0.8rem 0.5rem 2.2rem;
+            font-family: var(--font-family);
+            font-size: 0.85rem;
+            font-weight: 500;
+            outline: none;
+            transition: all 0.2s ease;
+        }
+
+        .search-input:focus {
+            border-color: var(--primary);
+            background-color: #ffffff;
+        }
+
+        .search-icon {
+            position: absolute;
+            left: 0.75rem;
+            top: 50%;
+            transform: translateY(-50%);
+            color: var(--text-muted);
+            display: flex;
+            align-items: center;
+        }
+
+        .icon-btn {
+            background-color: #ffffff;
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            width: 34px;
+            height: 34px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--text-dark);
+            cursor: pointer;
+            position: relative;
+        }
+
+        .btn-badge {
+            position: absolute;
+            top: -4px;
+            right: -4px;
+            background-color: var(--primary);
+            color: #ffffff;
+            font-size: 0.75rem;
+            font-weight: 700;
+            width: 16px;
+            height: 16px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .btn-new-lead {
+            background-color: var(--primary);
+            color: #ffffff;
+            border: none;
+            border-radius: 8px;
+            padding: 0.55rem 1rem;
+            font-family: var(--font-family);
+            font-size: 0.85rem;
+            font-weight: 600;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 0.4rem;
+        }
+
+        /* 3-Pane Unified Layout */
+        .inbox-grid {
+            flex: 1;
+            display: grid;
+            grid-template-columns: 320px 1fr 280px;
+            overflow: hidden;
+        }
+
+        @media (max-width: 1024px) {
+            .inbox-grid {
+                grid-template-columns: 280px 1fr;
+            }
+            .pane-lead-details {
+                display: none;
+            }
+        }
+
+        /* Pane 1: Threads List */
+        .pane-threads {
+            background-color: #ffffff;
+            border-right: 1px solid var(--border-color);
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+        }
+
+        .threads-search-bar {
+            padding: 1rem;
+            border-bottom: 1px solid var(--border-color);
+        }
+
+        .threads-filter-row {
+            display: flex;
+            gap: 0.35rem;
+            padding: 0.5rem 1rem;
+            border-bottom: 1px solid var(--border-color);
+            overflow-x: auto;
+            flex-shrink: 0;
+        }
+
+        .filter-pill {
+            padding: 0.3rem 0.7rem;
+            font-size: 0.78rem;
+            font-weight: 700;
+            border-radius: 999px;
+            border: 1px solid var(--border-color);
+            background-color: #f8fafc;
+            color: var(--text-muted);
+            cursor: pointer;
+            white-space: nowrap;
+        }
+
+        .filter-pill.active {
+            background-color: var(--primary-light);
+            color: var(--primary);
+            border-color: var(--primary);
+        }
+
+        .threads-scrollable {
+            flex: 1;
+            overflow-y: auto;
+        }
+
+        .thread-item {
+            padding: 1.1rem 1.25rem;
+            border-bottom: 1px solid var(--border-color);
+            cursor: pointer;
+            display: flex;
+            gap: 0.75rem;
+            transition: background-color 0.2s;
+            position: relative;
+        }
+
+        .thread-item:hover {
+            background-color: #f8fafc;
+        }
+
+        .thread-item.active {
+            background-color: #f1f5f9;
+        }
+
+        .thread-avatar-wrapper {
+            position: relative;
+            flex-shrink: 0;
+        }
+
+        .thread-avatar {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            object-fit: cover;
+            border: 1px solid var(--border-color);
+        }
+
+        .channel-icon-badge {
+            position: absolute;
+            bottom: -2px;
+            right: -2px;
+            width: 18px;
+            height: 18px;
+            border-radius: 50%;
+            background-color: #ffffff;
+            border: 1.5px solid #ffffff;
+            box-shadow: var(--shadow-sm);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .thread-content {
+            flex: 1;
+            min-width: 0;
+            display: flex;
+            flex-direction: column;
+            gap: 0.25rem;
+        }
+
+        .thread-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: baseline;
+        }
+
+        .thread-name {
+            font-size: 0.88rem;
+            font-weight: 750;
+            color: var(--text-dark);
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+        .thread-time {
+            font-size: 0.7rem;
+            color: var(--text-muted);
+            font-weight: 550;
+        }
+
+        .thread-snippet {
+            font-size: 0.8rem;
+            color: var(--text-muted);
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+        .thread-unread-dot {
+            width: 8px;
+            height: 8px;
+            background-color: var(--primary);
+            border-radius: 50%;
+            position: absolute;
+            right: 1.25rem;
+            top: 2.3rem;
+        }
+
+        /* Pane 2: Message Stream chat view */
+        .pane-chat {
+            display: flex;
+            flex-direction: column;
+            background-color: #f8fafc;
+            overflow: hidden;
+        }
+
+        .chat-header {
+            padding: 1rem 1.5rem;
+            background-color: #ffffff;
+            border-bottom: 1px solid var(--border-color);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-shrink: 0;
+        }
+
+        .chat-header-info {
+            display: flex;
+            flex-direction: column;
+            gap: 0.2rem;
+        }
+
+        .chat-header-name {
+            font-size: 0.95rem;
+            font-weight: 750;
+            color: var(--text-dark);
+        }
+
+        .chat-header-meta {
+            font-size: 0.78rem;
+            color: var(--text-muted);
+            font-weight: 600;
+        }
+
+        .chat-header-actions {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            color: var(--text-muted);
+        }
+
+        .chat-header-btn {
+            background: none;
+            border: none;
+            color: var(--text-muted);
+            cursor: pointer;
+            padding: 0.25rem;
+            display: flex;
+            align-items: center;
+        }
+
+        .chat-header-btn:hover {
+            color: var(--text-dark);
+        }
+
+        /* Stream bubbles */
+        .chat-messages-container {
+            flex: 1;
+            overflow-y: auto;
+            padding: 1.5rem;
+            display: flex;
+            flex-direction: column;
+            gap: 1.25rem;
+        }
+
+        .msg-bubble-wrapper {
+            display: flex;
+            flex-direction: column;
+            max-width: 75%;
+        }
+
+        .msg-bubble-wrapper.sent {
+            align-self: flex-end;
+        }
+
+        .msg-bubble-wrapper.received {
+            align-self: flex-start;
+        }
+
+        .msg-meta-row {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            font-size: 0.74rem;
+            color: var(--text-muted);
+            margin-bottom: 0.25rem;
+            font-weight: 600;
+        }
+
+        .msg-meta-row.sent {
+            justify-content: flex-end;
+        }
+
+        .msg-bubble {
+            padding: 1rem 1.15rem;
+            border-radius: 12px;
+            font-size: 0.88rem;
+            line-height: 1.5;
+            font-weight: 550;
+            white-space: pre-line;
+        }
+
+        .msg-bubble-wrapper.sent .msg-bubble {
+            background-color: var(--primary);
+            color: #ffffff;
+            border-bottom-right-radius: 2px;
+        }
+
+        .msg-bubble-wrapper.received .msg-bubble {
+            background-color: #ffffff;
+            color: var(--text-dark);
+            border-bottom-left-radius: 2px;
+            border: 1px solid var(--border-color);
+        }
+
+        /* Typing indicator */
+        .typing-bubble-wrapper {
+            display: flex;
+            align-self: flex-start;
+            background-color: #ffffff;
+            border: 1px solid var(--border-color);
+            border-radius: 12px;
+            border-bottom-left-radius: 2px;
+            padding: 0.8rem 1.1rem;
+            align-items: center;
+            gap: 0.25rem;
+        }
+
+        .typing-dot {
+            width: 6px;
+            height: 6px;
+            background-color: var(--text-muted);
+            border-radius: 50%;
+            animation: bounce 1.3s infinite ease-in-out;
+        }
+
+        .typing-dot:nth-child(2) { animation-delay: 0.2s; }
+        .typing-dot:nth-child(3) { animation-delay: 0.4s; }
+
+        @keyframes bounce {
+            0%, 60%, 100% { transform: translateY(0); }
+            30% { transform: translateY(-4px); }
+        }
+
+        /* Chat input box at bottom */
+        .chat-input-wrapper {
+            padding: 1.25rem 1.5rem;
+            background-color: #ffffff;
+            border-top: 1px solid var(--border-color);
+            display: flex;
+            flex-direction: column;
+            gap: 0.75rem;
+            flex-shrink: 0;
+        }
+
+        .input-channel-selector {
+            display: flex;
+            gap: 0.5rem;
+        }
+
+        .selector-pill {
+            padding: 0.3rem 0.65rem;
+            font-size: 0.75rem;
+            font-weight: 750;
+            border-radius: 6px;
+            border: 1px solid var(--border-color);
+            background-color: #ffffff;
+            color: var(--text-muted);
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 0.3rem;
+        }
+
+        .selector-pill.active {
+            background-color: var(--primary-light);
+            color: var(--primary);
+            border-color: var(--primary);
+        }
+
+        .chat-textarea {
+            width: 100%;
+            min-height: 72px;
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            padding: 0.75rem;
+            font-family: var(--font-family);
+            font-size: 0.88rem;
+            font-weight: 600;
+            outline: none;
+            resize: none;
+        }
+
+        .chat-textarea:focus {
+            border-color: var(--primary);
+        }
+
+        .chat-input-actions {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .btn-spark-suggest {
+            background: none;
+            border: none;
+            color: var(--primary);
+            font-family: var(--font-family);
+            font-size: 0.8rem;
+            font-weight: 750;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 0.35rem;
+        }
+
+        .btn-spark-suggest:hover {
+            color: var(--primary-hover);
+        }
+
+        .btn-send-message {
+            background-color: var(--primary);
+            color: #ffffff;
+            border: none;
+            border-radius: 8px;
+            padding: 0.5rem 1.25rem;
+            font-family: var(--font-family);
+            font-size: 0.86rem;
+            font-weight: 700;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 0.4rem;
+        }
+
+        .btn-send-message:hover {
+            background-color: var(--primary-hover);
+        }
+
+        /* Pane 3: Lead Detail Context widget */
+        .pane-lead-details {
+            background-color: #ffffff;
+            border-left: 1px solid var(--border-color);
+            padding: 1.5rem;
+            display: flex;
+            flex-direction: column;
+            gap: 1.5rem;
+            overflow-y: auto;
+        }
+
+        .details-section-title {
+            font-size: 0.78rem;
+            font-weight: 750;
+            color: var(--text-muted);
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            margin-bottom: 0.85rem;
+        }
+
+        .context-lead-card {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            text-align: center;
+            gap: 0.75rem;
+            padding-bottom: 1.25rem;
+            border-bottom: 1px solid var(--border-color);
+        }
+
+        .context-avatar {
+            width: 64px;
+            height: 64px;
+            border-radius: 50%;
+            object-fit: cover;
+            border: 2px solid var(--primary-light);
+        }
+
+        .context-name-block {
+            display: flex;
+            flex-direction: column;
+            gap: 0.15rem;
+        }
+
+        .context-name {
+            font-size: 0.95rem;
+            font-weight: 750;
+            color: var(--text-dark);
+        }
+
+        .context-company {
+            font-size: 0.78rem;
+            color: var(--text-muted);
+            font-weight: 600;
+        }
+
+        .context-score-wrapper {
+            margin-top: 0.25rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .context-score-badge {
+            background-color: var(--primary-light);
+            color: var(--primary);
+            font-size: 0.76rem;
+            font-weight: 750;
+            padding: 0.2rem 0.5rem;
+            border-radius: 6px;
+        }
+
+        .context-score-label {
+            font-size: 0.74rem;
+            color: var(--text-muted);
+            font-weight: 600;
+        }
+
+        .btn-view-profile-context {
+            width: 100%;
+            border: 1.5px solid var(--border-color);
+            background-color: #ffffff;
+            color: var(--text-dark);
+            font-family: var(--font-family);
+            font-size: 0.82rem;
+            font-weight: 750;
+            padding: 0.5rem 1rem;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.2s;
+            margin-top: 0.5rem;
+        }
+
+        .btn-view-profile-context:hover {
+            border-color: var(--primary);
+            color: var(--primary);
+        }
+
+        /* AI Insights */
+        .insight-box {
+            background-color: var(--primary-light);
+            border-radius: 8px;
+            padding: 1rem;
+            display: flex;
+            flex-direction: column;
+            gap: 0.65rem;
+        }
+
+        .insight-pill-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .insight-label {
+            font-size: 0.75rem;
+            font-weight: 750;
+            color: var(--primary);
+            text-transform: uppercase;
+        }
+
+        .insight-pct {
+            font-size: 0.8rem;
+            font-weight: 800;
+            color: var(--primary);
+        }
+
+        .insight-desc {
+            font-size: 0.8rem;
+            color: var(--text-dark);
+            line-height: 1.4;
+            font-weight: 550;
+        }
+
+        .suggested-action-box {
+            border: 1px solid var(--border-color);
+            background-color: #ffffff;
+            border-radius: 8px;
+            padding: 0.85rem;
+            display: flex;
+            flex-direction: column;
+            gap: 0.4rem;
+        }
+
+        .action-title {
+            font-size: 0.75rem;
+            font-weight: 750;
+            color: var(--text-muted);
+            text-transform: uppercase;
+        }
+
+        .action-desc {
+            font-size: 0.8rem;
+            color: var(--text-dark);
+            line-height: 1.35;
+            font-weight: 600;
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Left Sidebar Panel -->
+    <div class="sidebar">
+        <div>
+            <!-- Logo Section -->
+            <a href="dashboard.html" class="logo-container">
+                <span class="logo-icon">
+                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"/>
+                        <polyline points="3.27 6.96 12 12.01 20.73 6.96"/>
+                        <line x1="12" y1="22.08" x2="12" y2="12"/>
+                    </svg>
+                </span>
+                <span class="logo-text">Sales<span>AI</span></span>
+            </a>
+
+            <!-- Navigation Links -->
+            <ul class="nav-links">
+                <li class="nav-item">
+                    <a href="dashboard.html">
+                        <span class="nav-icon">
+                            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+                                <rect x="3" y="3" width="7" height="9"/>
+                                <rect x="14" y="3" width="7" height="5"/>
+                                <rect x="14" y="12" width="7" height="9"/>
+                                <rect x="3" y="16" width="7" height="5"/>
+                            </svg>
+                        </span>
+                        <span class="nav-text">Dashboard</span>
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a href="leads.html">
+                        <span class="nav-icon">
+                            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+                                <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/>
+                                <circle cx="9" cy="7" r="4"/>
+                                <path d="M23 21v-2a4 4 0 0 0-3-3.87"/>
+                                <path d="M16 3.13a4 4 0 0 1 0 7.75"/>
+                            </svg>
+                        </span>
+                        <span class="nav-text">Leads</span>
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a href="companies.html">
+                        <span class="nav-icon">
+                            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+                                <path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"/>
+                            </svg>
+                        </span>
+                        <span class="nav-text">Companies</span>
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a href="campaigns.html">
+                        <span class="nav-icon">
+                            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+                                <polygon points="12 2 2 7 12 12 22 7 12 2"/>
+                                <polyline points="2 17 12 22 22 17"/>
+                                <polyline points="2 12 12 17 22 12"/>
+                            </svg>
+                        </span>
+                        <span class="nav-text">Campaigns</span>
+                    </a>
+                </li>
+                <li class="nav-item active">
+                    <a href="inbox.html">
+                        <span class="nav-icon">
+                            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+                                <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/>
+                            </svg>
+                        </span>
+                        <span class="nav-text">Inbox</span>
+                        <span class="inbox-badge" id="sidebarBadgeCount">12</span>
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a href="meetings.html">
+                        <span class="nav-icon">
+                            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+                                <rect x="3" y="4" width="18" height="18" rx="2" ry="2"/>
+                                <line x1="16" y1="2" x2="16" y2="6"/>
+                                <line x1="8" y1="2" x2="8" y2="6"/>
+                                <line x1="3" y1="10" x2="21" y2="10"/>
+                            </svg>
+                        </span>
+                        <span class="nav-text">Meetings</span>
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a href="tasks.html">
+                        <span class="nav-icon">
+                            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+                                <polyline points="9 11 12 14 22 4"/>
+                                <path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"/>
+                            </svg>
+                        </span>
+                        <span class="nav-text">Tasks</span>
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a href="deals.html">
+                        <span class="nav-icon">
+                            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+                                <line x1="12" y1="1" x2="12" y2="23"/>
+                                <path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/>
+                            </svg>
+                        </span>
+                        <span class="nav-text">Deals</span>
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a href="reports.html">
+                        <span class="nav-icon">
+                            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+                                <line x1="18" y1="20" x2="18" y2="10"/>
+                                <line x1="12" y1="20" x2="12" y2="4"/>
+                                <line x1="6" y1="20" x2="6" y2="14"/>
+                            </svg>
+                        </span>
+                        <span class="nav-text">Reports</span>
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a href="settings.html">
+                        <span class="nav-icon">
+                            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+                                <circle cx="12" cy="12" r="3"/>
+                                <path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 1 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 1 1-2.83-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 1 1 2.83-2.83l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1-2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 1 1 2.83 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"/>
+                            </svg>
+                        </span>
+                        <span class="nav-text">Settings</span>
+                    </a>
+                </li>
+            </ul>
+        </div>
+
+        <!-- Sidebar User Profile -->
+        <div class="sidebar-user">
+            <img src="priya_sharma_avatar.png" alt="Priya Sharma" class="user-avatar">
+            <div class="user-details">
+                <div class="user-name">Priya Sharma</div>
+                <div class="user-role">Sales Representative</div>
+            </div>
+            <span class="user-dropdown">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="6 9 12 15 18 9"/></svg>
+            </span>
+        </div>
+    </div>
+
+    <!-- Main Workspace Content Panel -->
+    <div class="main-workspace">
+        
+        <!-- Breadcrumbs Header -->
+        <div class="workspace-header">
+            <div class="workspace-breadcrumbs">
+                <span onclick="window.location.href='dashboard.html'">Dashboard</span> &gt; 
+                <span class="active">Inbox</span>
+            </div>
+            
+            <div class="header-actions">
+                <div class="search-wrapper">
+                    <span class="search-icon">
+                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+                    </span>
+                    <input type="text" placeholder="Search threads..." class="search-input">
+                </div>
+                <button class="icon-btn" onclick="alert('No new alerts.')">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/>
+                        <path d="M13.73 21a2 2 0 0 1-3.46 0"/>
+                    </svg>
+                    <span class="btn-badge">6</span>
+                </button>
+                <button class="icon-btn" onclick="alert('View Calendar dashboard.')">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+                        <rect x="3" y="4" width="18" height="18" rx="2" ry="2"/>
+                        <line x1="16" y1="2" x2="16" y2="6"/>
+                        <line x1="8" y1="2" x2="8" y2="6"/>
+                        <line x1="3" y1="10" x2="21" y2="10"/>
+                    </svg>
+                </button>
+                <button class="btn-new-lead" onclick="window.location.href='add-lead.html'">
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+                    New Lead
+                </button>
+            </div>
+        </div>
+
+        <!-- 3-Pane Layout Grid -->
+        <div class="inbox-grid">
+            
+            <!-- Pane 1: Threads List -->
+            <div class="pane-threads">
+                <div class="threads-search-bar">
+                    <div style="position:relative; width:100%;">
+                        <span class="search-icon">
+                            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+                        </span>
+                        <input type="text" placeholder="Filter messages..." class="search-input" style="width:100%;">
+                    </div>
+                </div>
+                
+                <div class="threads-filter-row">
+                    <span class="filter-pill active">All</span>
+                    <span class="filter-pill">Unread</span>
+                    <span class="filter-pill">Starred</span>
+                    <span class="filter-pill">Sent</span>
+                </div>
+
+                <div class="threads-scrollable">
+                    <!-- Thread Item 1 (Rahul Sharma) -->
+                    <div class="thread-item active" id="threadRahul">
+                        <div class="thread-avatar-wrapper">
+                            <img src="rahul_sharma_avatar.png" alt="Rahul Sharma" class="thread-avatar" id="listAvatar">
+                            <span class="channel-icon-badge" style="color:var(--primary);">
+                                <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg>
+                            </span>
+                        </div>
+                        <div class="thread-content">
+                            <div class="thread-header">
+                                <span class="thread-name" id="listName">Rahul Sharma</span>
+                                <span class="thread-time" id="listTime">Just now</span>
+                            </div>
+                            <span class="thread-snippet" id="listSnippet">Re: Automating accounting operations...</span>
+                        </div>
+                        <div class="thread-unread-dot" id="unreadDot" style="display:none;"></div>
+                    </div>
+
+                    <!-- Thread Item 2 (Aditya Sen) -->
+                    <div class="thread-item" onclick="alert('Demo placeholder thread.')">
+                        <div class="thread-avatar-wrapper">
+                            <div class="thread-avatar" style="background-color:#eff6ff; color:#3b82f6; display:flex; align-items:center; justify-content:center; font-weight:700; font-size:0.85rem; border: 1px solid var(--border-color);">AS</div>
+                            <span class="channel-icon-badge" style="color:var(--info);">
+                                <svg width="10" height="10" fill="currentColor" viewBox="0 0 24 24"><path d="M19 0h-14c-2.761 0-5 2.239-5 5v14c0 2.761 2.239 5 5 5h14c2.762 0 5-2.239 5-5v-14c0-2.761-2.238-5-5-5zm-11 19h-3v-11h3v11zm-1.5-12.268c-.966 0-1.75-.779-1.75-1.75s.784-1.75 1.75-1.75 1.75.779 1.75 1.75-.784 1.75-1.75 1.75zm13.5 12.268h-3v-5.604c0-3.368-4-3.113-4 0v5.604h-3v-11h3v1.765c1.396-2.586 7-2.777 7 2.476v6.759z"/></svg>
+                            </span>
+                        </div>
+                        <div class="thread-content">
+                            <div class="thread-header">
+                                <span class="thread-name">Aditya Sen</span>
+                                <span class="thread-time">2h ago</span>
+                            </div>
+                            <span class="thread-snippet">Hey Priya, send over your product deck.</span>
+                        </div>
+                    </div>
+
+                    <!-- Thread Item 3 (Vikram Singh) -->
+                    <div class="thread-item" onclick="alert('Demo placeholder thread.')">
+                        <div class="thread-avatar-wrapper">
+                            <div class="thread-avatar" style="background-color:#ecfdf5; color:#10b981; display:flex; align-items:center; justify-content:center; font-weight:700; font-size:0.85rem; border: 1px solid var(--border-color);">VS</div>
+                            <span class="channel-icon-badge" style="color:#10b981;">
+                                <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><path d="M21 11.5a8.38 8.38 0 0 1-.9 3.8 8.5 8.5 0 0 1-7.6 4.7 8.38 8.38 0 0 1-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 0 1-.9-3.8 8.5 8.5 0 0 1 4.7-7.6 8.38 8.38 0 0 1 3.8-.9h.5a8.48 8.48 0 0 1 8 8v.5z"/></svg>
+                            </span>
+                        </div>
+                        <div class="thread-content">
+                            <div class="thread-header">
+                                <span class="thread-name">Vikram Singh</span>
+                                <span class="thread-time">1d ago</span>
+                            </div>
+                            <span class="thread-snippet">Yes, Thursday 3 PM works fine.</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Pane 2: Message Stream Chat View -->
+            <div class="pane-chat">
+                <!-- Chat Header -->
+                <div class="chat-header">
+                    <div class="chat-header-info">
+                        <span class="chat-header-name" id="chatHeaderName">Rahul Sharma</span>
+                        <span class="chat-header-meta" id="chatHeaderEmail">Email — rahul@xyzlogistics.com</span>
+                    </div>
+                    
+                    <div class="chat-header-actions">
+                        <button class="chat-header-btn" onclick="alert('Thread starred.')">
+                            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
+                        </button>
+                        <button class="chat-header-btn" onclick="alert('Thread archived.')">
+                            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><polyline points="21 8 21 21 3 21 3 8"/><rect x="1" y="3" width="22" height="5"/><line x1="10" y1="12" x2="14" y2="12"/></svg>
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Messages container -->
+                <div class="chat-messages-container" id="chatContainer">
+                    
+                    <!-- Message 1 (Outbound Email) -->
+                    <div class="msg-bubble-wrapper sent">
+                        <div class="msg-meta-row sent">
+                            <span>Priya Sharma</span>
+                            <span>•</span>
+                            <span id="sentTimeText">10:55 AM</span>
+                        </div>
+                        <div class="msg-bubble" id="sentBodyText">
+Hi Rahul,
+
+I hope you're doing well.
+
+I saw that XYZ Logistics recently opened 3 new regional offices. Congrats on the growth! I know that expanding operations can make month-end closing and branch accounting quite manual and slow.
+
+We help logistics firms automate branch accounting and reduce month-end closing times by 40%. Would you be open to a 10-minute call this Thursday at 3:00 PM to see how we could do this for XYZ Logistics?
+
+Best regards,
+Priya Sharma
+                        </div>
+                    </div>
+
+                    <!-- Typing indicator (hidden by default) -->
+                    <div class="typing-bubble-wrapper" id="typingIndicator" style="display:none;">
+                        <span class="typing-dot"></span>
+                        <span class="typing-dot"></span>
+                        <span class="typing-dot"></span>
+                    </div>
+
+                    <!-- Message 2 (Incoming reply - added dynamically or statically) -->
+                    <div class="msg-bubble-wrapper received" id="incomingReplyBox">
+                        <div class="msg-meta-row">
+                            <span id="replySenderName">Rahul Sharma</span>
+                            <span>•</span>
+                            <span id="replyTimeText">11:32 AM</span>
+                        </div>
+                        <div class="msg-bubble" id="replyBodyText">
+Hi Priya,
+
+Thanks for reaching out. Automated branch accounting is definitely a focus area for us as we grow. I am open to a 10-minute call this Thursday at 3:00 PM.
+
+Please send a calendar invite.
+
+Best,
+Rahul
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Chat Input Section -->
+                <div class="chat-input-wrapper">
+                    <div class="input-channel-selector">
+                        <button class="selector-pill active">
+                            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg>
+                            Reply via Email
+                        </button>
+                        <button class="selector-pill" onclick="alert('Switching channel to LinkedIn...')">
+                            <svg width="12" height="12" fill="currentColor" viewBox="0 0 24 24"><path d="M19 0h-14c-2.761 0-5 2.239-5 5v14c0 2.761 2.239 5 5 5h14c2.762 0 5-2.239 5-5v-14c0-2.761-2.238-5-5-5zm-11 19h-3v-11h3v11zm-1.5-12.268c-.966 0-1.75-.779-1.75-1.75s.784-1.75 1.75-1.75 1.75.779 1.75 1.75-.784 1.75-1.75 1.75zm13.5 12.268h-3v-5.604c0-3.368-4-3.113-4 0v5.604h-3v-11h3v1.765c1.396-2.586 7-2.777 7 2.476v6.759z"/></svg>
+                            LinkedIn Message
+                        </button>
+                        <button class="selector-pill" onclick="alert('Logging CRM call outreach task.')">
+                            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"/></svg>
+                            Log Call
+                        </button>
+                    </div>
+
+                    <textarea class="chat-textarea" id="chatTextarea" placeholder="Type a message or use '/' for suggestions..."></textarea>
+                    
+                    <div class="chat-input-actions">
+                        <button class="btn-spark-suggest" id="btnAISuggest">
+                            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" style="color:var(--primary);"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
+                            Use AI Suggestion
+                        </button>
+                        <button class="btn-send-message" id="btnSendMsg">
+                            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="22" y1="2" x2="11" y2="13"/><polygon points="22 2 15 22 11 13 2 9 22 2"/></svg>
+                            Send
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Pane 3: Lead Detail Context Widget -->
+            <div class="pane-lead-details">
+                <div>
+                    <h5 class="details-section-title">Lead Context</h5>
+                    <div class="context-lead-card">
+                        <img src="rahul_sharma_avatar.png" alt="Rahul Sharma" class="context-avatar" id="detailsAvatar">
+                        <div class="context-name-block">
+                            <span class="context-name" id="detailsName">Rahul Sharma</span>
+                            <span class="context-company" id="detailsCompany">CFO at XYZ Logistics</span>
+                        </div>
+                        <div class="context-score-wrapper">
+                            <span class="context-score-badge">78/100</span>
+                            <span class="context-score-label">Lead Score</span>
+                        </div>
+                        <button class="btn-view-profile-context" id="btnViewProfileContext">View Full Profile</button>
+                    </div>
+                </div>
+
+                <div>
+                    <h5 class="details-section-title">AI Insights</h5>
+                    <div class="insight-box">
+                        <div class="insight-pill-row">
+                            <span class="insight-label">Intent Strength</span>
+                            <span class="insight-pct">88%</span>
+                        </div>
+                        <p class="insight-desc">Strong booking probability. Showing clear pain points around manual accounting workflows.</p>
+                    </div>
+                </div>
+
+                <div class="suggested-action-box">
+                    <span class="action-title">Suggested Next Action</span>
+                    <p class="action-desc">Send calendar invite for Thursday, 3:00 PM.</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Parse Query string parameters on load
+        const urlParams = new URLSearchParams(window.location.search);
+        const fullName = urlParams.get('name') || 'Rahul Sharma';
+        const companyName = urlParams.get('company') || 'XYZ Logistics';
+        const jobTitle = urlParams.get('title') || 'CFO';
+        const emailVal = urlParams.get('email') || 'rahul@xyzlogistics.com';
+        const websiteVal = urlParams.get('website') || 'xyzlogistics.com';
+        const sentFlag = urlParams.get('sent') === 'true';
+
+        const firstName = fullName.split(' ')[0];
+
+        // Prepopulate text blocks
+        document.getElementById('listName').innerText = fullName;
+        document.getElementById('chatHeaderName').innerText = fullName;
+        document.getElementById('chatHeaderEmail').innerText = `Email — ${emailVal}`;
+        document.getElementById('detailsName').innerText = fullName;
+        document.getElementById('detailsCompany').innerText = `${jobTitle} at ${companyName}`;
+        
+        // Handle Avatar fallbacks dynamically
+        const isRahul = fullName.toLowerCase().includes('rahul');
+        const listAvatarImg = document.getElementById('listAvatar');
+        const detailsAvatarImg = document.getElementById('detailsAvatar');
+
+        if (!isRahul) {
+            // Replace images with generic letter avatars
+            listAvatarImg.src = 'priya_sharma_avatar.png'; // Fallback
+            detailsAvatarImg.src = 'priya_sharma_avatar.png'; // Fallback
+        }
+
+        // Action button route setup
+        document.getElementById('btnViewProfileContext').addEventListener('click', () => {
+            const redirectParams = new URLSearchParams(window.location.search);
+            window.location.href = `lead-profile.html?${redirectParams.toString()}`;
+        });
+
+        // Chat flow logic
+        const chatContainer = document.getElementById('chatContainer');
+        const sentBodyText = document.getElementById('sentBodyText');
+        const incomingReplyBox = document.getElementById('incomingReplyBox');
+        const typingIndicator = document.getElementById('typingIndicator');
+        const listSnippetText = document.getElementById('listSnippet');
+        const listTimeLabel = document.getElementById('listTime');
+        const unreadDotElement = document.getElementById('unreadDot');
+        const sidebarBadge = document.getElementById('sidebarBadgeCount');
+
+        // Dynamically rebuild sent body
+        const customizedSentBody = `Hi ${firstName},
+
+I hope you're doing well.
+
+I saw that ${companyName} recently expanded operations. Congrats on the growth! I know that expanding operations can make month-end closing and branch accounting quite manual and slow.
+
+We help firms automate branch accounting and reduce month-end closing times by 40%. Would you be open to a 10-minute call this Thursday at 3:00 PM to see how we could do this for ${companyName}?
+
+Best regards,
+Priya Sharma`;
+
+        sentBodyText.innerText = customizedSentBody;
+
+        if (sentFlag) {
+            // Outbound message dispatched! Now trigger response simulation
+            incomingReplyBox.style.display = 'none'; // Hide reply initially
+            listSnippetText.innerText = `You: ${customizedSentBody.substring(0, 30)}...`;
+            listTimeLabel.innerText = 'Just now';
+            
+            // Step 1: Wait 2.5 seconds, then show typing indicator
+            setTimeout(() => {
+                // Move typing indicator to bottom
+                chatContainer.appendChild(typingIndicator);
+                typingIndicator.style.display = 'flex';
+                chatContainer.scrollTop = chatContainer.scrollHeight;
+            }, 2500);
+
+            // Step 2: Wait 5.5 seconds total, then append incoming message
+            setTimeout(() => {
+                typingIndicator.style.display = 'none';
+                
+                // Show reply
+                incomingReplyBox.style.display = 'flex';
+                
+                const customizedReply = `Hi Priya,
+
+Thanks for reaching out. Automated branch accounting is definitely a focus area for us as we grow. I am open to a 10-minute call this Thursday at 3:00 PM.
+
+Please send a calendar invite.
+
+Best,
+${firstName}`;
+
+                document.getElementById('replySenderName').innerText = fullName;
+                document.getElementById('replyBodyText').innerText = customizedReply;
+                document.getElementById('replyTimeText').innerText = 'Just now';
+                
+                // Update threads list
+                listSnippetText.innerText = `${fullName}: ${customizedReply.substring(0, 30)}...`;
+                listSnippetText.style.fontWeight = '700';
+                listSnippetText.style.color = 'var(--text-dark)';
+                unreadDotElement.style.display = 'block';
+                
+                // Play notification alert sound (using Web Audio API synthesiser to avoid file dependencies)
+                playNotificationSound();
+
+                // Increment Inbox Badge count
+                sidebarBadge.innerText = '13';
+                
+                chatContainer.scrollTop = chatContainer.scrollHeight;
+            }, 5500);
+        } else {
+            // Static view: set reply message body normally
+            const customizedReply = `Hi Priya,
+
+Thanks for reaching out. Automated branch accounting is definitely a focus area for us as we grow. I am open to a 10-minute call this Thursday at 3:00 PM.
+
+Please send a calendar invite.
+
+Best,
+${firstName}`;
+            document.getElementById('replySenderName').innerText = fullName;
+            document.getElementById('replyBodyText').innerText = customizedReply;
+        }
+
+        // Web Audio Synthesizer for high-fidelity micro-interactions
+        function playNotificationSound() {
+            try {
+                const context = new (window.AudioContext || window.webkitAudioContext)();
+                
+                // Node 1: High tone
+                const osc1 = context.createOscillator();
+                const gain1 = context.createGain();
+                osc1.type = 'sine';
+                osc1.frequency.setValueAtTime(587.33, context.currentTime); // D5
+                osc1.frequency.setValueAtTime(880, context.currentTime + 0.1); // A5
+                
+                gain1.gain.setValueAtTime(0.1, context.currentTime);
+                gain1.gain.exponentialRampToValueAtTime(0.01, context.currentTime + 0.35);
+                
+                osc1.connect(gain1);
+                gain1.connect(context.destination);
+                
+                osc1.start();
+                osc1.stop(context.currentTime + 0.4);
+            } catch (e) {
+                console.log("Web Audio API disabled or blocked by user gesture permissions.");
+            }
+        }
+
+        // AI Suggestion reply filler
+        const aiSuggestBtn = document.getElementById('btnAISuggest');
+        const chatTextarea = document.getElementById('chatTextarea');
+
+        aiSuggestBtn.addEventListener('click', () => {
+            chatTextarea.value = `Hi ${firstName}, sounds great! I've sent a calendar invite for Thursday at 3:00 PM. Looking forward to our call.`;
+        });
+
+        // Send Custom Reply Msg
+        const btnSendMsg = document.getElementById('btnSendMsg');
+        btnSendMsg.addEventListener('click', () => {
+            const bodyContent = chatTextarea.value.trim();
+            if (!bodyContent) return;
+
+            const timeNow = new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+
+            const newMsgHtml = `
+                <div class="msg-bubble-wrapper sent">
+                    <div class="msg-meta-row sent">
+                        <span>Priya Sharma</span>
+                        <span>•</span>
+                        <span>${timeNow}</span>
+                    </div>
+                    <div class="msg-bubble">${bodyContent}</div>
+                </div>
+            `;
+            // Insert before typing indicator
+            chatContainer.insertBefore(document.createRange().createContextualFragment(newMsgHtml), typingIndicator);
+            
+            chatTextarea.value = '';
+            listSnippetText.innerText = `You: ${bodyContent.substring(0, 30)}...`;
+            listSnippetText.style.fontWeight = '600';
+            listSnippetText.style.color = 'var(--text-muted)';
+            unreadDotElement.style.display = 'none';
+            chatContainer.scrollTop = chatContainer.scrollHeight;
+
+            // Automatically schedule a meeting in localStorage if keywords match
+            const lowerBody = bodyContent.toLowerCase();
+            if (lowerBody.includes('calendar') || lowerBody.includes('invite') || lowerBody.includes('schedule') || lowerBody.includes('call') || lowerBody.includes('meeting') || lowerBody.includes('3:00')) {
+                const defaultMeetings = [
+                    {
+                        id: "m1",
+                        title: "Product Demo",
+                        with: "XYZ Logistics (Rahul Sharma)",
+                        type: "Demo",
+                        dateTime: "23 May 2024, 03:00 PM",
+                        owner: "Priya Sharma",
+                        status: "Upcoming",
+                        priority: "High",
+                        summary: "AI Pre-meeting Brief:\n• Objective: Showcase branch accounting automation and month-end consolidation capabilities.\n• Key Pain Points: CFO wants to automate branch-level accounting and reduce month-end closing latency (currently 12 days).\n• Sentiment: Highly positive (88% intent score).\n• Recommended Agenda:\n  1. Brief introduction & logistics context (5 mins)\n  2. Live demo of consolidated multi-branch dashboard (15 mins)\n  3. Review pricing models and implementation timeline (10 mins)"
+                    },
+                    {
+                        id: "m2",
+                        title: "Discovery Call",
+                        with: "TechNova Solutions (Amit Verma)",
+                        type: "Call",
+                        dateTime: "22 May 2024, 11:00 AM",
+                        owner: "Priya Sharma",
+                        status: "Upcoming",
+                        priority: "Medium",
+                        summary: "AI Pre-meeting Brief:\n• Objective: Discovery call regarding lead enrichment features.\n• Key Pain Points: Automated scraping of sales leads databases.\n• Sentiment: Neutral.\n• Recommended Agenda:\n  1. Probe current outreach pipelines and data enrichment sources."
+                    },
+                    {
+                        id: "m3",
+                        title: "Follow-up Meeting",
+                        with: "Global Enterprises (Neha Patel)",
+                        type: "Meeting",
+                        dateTime: "21 May 2024, 04:30 PM",
+                        owner: "Amit Verma",
+                        status: "Upcoming",
+                        priority: "Medium",
+                        summary: "AI Pre-meeting Brief:\n• Objective: Follow up post proposal submission.\n• Key Pain Points: Pricing flexibility and volume discounts.\n• Sentiment: Positive."
+                    },
+                    {
+                        id: "m4",
+                        title: "Proposal Discussion",
+                        with: "Bright Future Ltd. (Vikram Singh)",
+                        type: "Meeting",
+                        dateTime: "20 May 2024, 02:00 PM",
+                        owner: "Priya Sharma",
+                        status: "Upcoming",
+                        priority: "High",
+                        summary: "AI Pre-meeting Brief:\n• Objective: Finalize proposal terms.\n• Key Pain Points: Dedicated support SLAs.\n• Sentiment: High."
+                    },
+                    {
+                        id: "m5",
+                        title: "Onboarding Call",
+                        with: "NextGen Retail (Sandeep Rao)",
+                        type: "Call",
+                        dateTime: "19 May 2024, 10:30 AM",
+                        owner: "Amit Verma",
+                        status: "Upcoming",
+                        priority: "Low",
+                        summary: "AI Pre-meeting Brief:\n• Objective: Kickoff onboarding phase.\n• Key Pain Points: Custom CSV exports."
+                    }
+                ];
+                
+                let currentMeetings = [];
+                try {
+                    currentMeetings = JSON.parse(localStorage.getItem('scheduled_meetings')) || defaultMeetings;
+                } catch(e) {
+                    currentMeetings = defaultMeetings;
+                }
+                
+                const titleText = `Scheduled Demo: ${companyName}`;
+                const alreadyExists = currentMeetings.some(m => m.with.includes(fullName) && m.title === titleText);
+                if (!alreadyExists) {
+                    const newMeeting = {
+                        id: 'm_' + Date.now(),
+                        title: titleText,
+                        with: `${companyName} (${fullName})`,
+                        type: "Demo",
+                        dateTime: "Thursday, 03:00 PM",
+                        owner: "Priya Sharma",
+                        status: "Upcoming",
+                        priority: "High",
+                        summary: `AI Pre-meeting Brief:
+• Objective: Demo the product and branch accounting automation.
+• Key Pain Points: CFO wants to automate branch-level accounting and reduce month-end closing times.
+• Sentiment: Extremely high interest. Initiated via inbox email scheduling.
+• Recommended Agenda:
+  1. Showcase multi-branch data synchronization (15 mins)
+  2. Map out month-end closing sequence (10 mins)
+  3. Discuss setup and next steps (5 mins)`
+                    };
+                    currentMeetings.unshift(newMeeting);
+                    localStorage.setItem('scheduled_meetings', JSON.stringify(currentMeetings));
+                }
+            }
+            
+            alert('Reply sent successfully! A meeting has been scheduled in your Meetings calendar.');
+        });
+    </script>
+</body>
+</html>
