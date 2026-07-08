@@ -9,6 +9,10 @@
   ],
   "routes": [
     {
+      "src": "/",
+      "dest": "/dashboard.html"
+    },
+    {
       "src": "/(.*)",
       "dest": "/$1"
     }
